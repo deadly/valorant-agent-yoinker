@@ -11,4 +11,4 @@ Agent selecting is handled via the VALORANT API, which means that this program d
 With all programs like this, there is no guarantee that it's safe because it's not officially supported by Riot. However, this program does not use an autoclicker to select the agent, read the game's memory, or change the game's files; therefore, a suspension shouldn't occur. No suspensions have been reported so far from using this program.
 
 # How to Use
-Launch VALORANT and then run the program. Enter your region and agent you want to instalock. 
+Launch VALORANT and then run the program. Enter your region and agent you want to instalock. Requires Python 3 or higher.

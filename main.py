@@ -33,4 +33,4 @@ while True:
             seenMatches.append(client.pregame_fetch_match()['ID'])
             print('Successfully Locked ' + preferredAgent.capitalize())
     except Exception as e:
-        print('', end='')
+        print('', end='') # Using pass caused weird behavior

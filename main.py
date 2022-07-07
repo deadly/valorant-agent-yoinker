@@ -2,7 +2,7 @@ import json
 from requests import session
 from valclient.client import Client
 print('Valorant Agent Yoinker by https://github.com/deadly')
-playerRegion = input('Enter your region (see Github page): ').lower()
+playerRegion = input('Enter your region (e.g NA): ').lower()
 client = Client(region=playerRegion)
 client.activate()
 valid = False

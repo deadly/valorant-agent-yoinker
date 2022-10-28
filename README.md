@@ -14,4 +14,6 @@ Agent selecting is handled via the VALORANT API, which means that this program d
 USE AT YOUR OWN RISK. With all programs like this, there is no guarantee that it's safe because using the VALORANT API in this manner is against Riot's Terms of Service. However, this program does not use an autoclicker to select the agent, read the game's memory, or change the game's files; therefore, the anticheat shouldn't be triggered. No suspensions have been reported so far from using this program. All things considered, I would use this only on alt account if you don't want to risk the 7 day API abuse suspension, albeit unlikely.
 
 # Example
-<img src="https://imgur.com/a/nXU8bta"/>
+<p align="center">
+    <img src="https://raw.githubusercontent.com/deadly/valorant-agent-yoinker/main/example.png" alt="Example of how to use valorant agent yoinker">
+</p>

@@ -1,4 +1,7 @@
 {
+    "ran": false,
+    "region": null,
+    
     "agents": {
         "jett" : "add6443a-41bd-e414-f6ad-e58d267f4e95",
         "reyna" : "a3bfb853-43b2-7238-a4f1-ad90e9e46bcc",
@@ -18,6 +21,29 @@
         "brimstone" : "9f0d8ba9-4140-b941-57d3-a7ad57c6b417",
         "astra" : "41fb69c1-4189-7b37-f117-bcaf1e96f1bf",
         "viper" : "707eab51-4836-f488-046a-cda6bf494859",
-        "fade" : "1b47567f-8f7b-444b-aae3-b0c634622d10"
+        "fade" : "1b47567f-8f7b-444b-aae3-b0c634622d10",
+        "harbor" : "95b78ed7-4637-86d9-7e41-71ba8c293152"
+    },
+
+    "maps": {
+        "ascent": null,
+        "duality": null,
+        "foxtrot": null,
+        "canyon": null,
+        "triad": null,
+        "port": null,
+        "pitt": null,
+        "bonsai": null
+    },
+
+    "codes": {
+        "ascent": "ascent",
+        "duality": "bind",
+        "foxtrot": "breeze",
+        "canyon": "fracture",
+        "triad": "haven",
+        "port": "icebox",
+        "pitt": "pearl",
+        "bonsai": "split"
     }
 }

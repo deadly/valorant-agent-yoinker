@@ -33,7 +33,8 @@
         "triad": null,
         "port": null,
         "pitt": null,
-        "bonsai": null
+        "bonsai": null,
+        "jam": null
     },
 
     "codes": {
@@ -44,6 +45,7 @@
         "triad": "haven",
         "port": "icebox",
         "pitt": "pearl",
-        "bonsai": "split"
+        "bonsai": "split",
+        "jam": "lotus"
     }
 }

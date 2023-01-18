@@ -18,5 +18,5 @@ USE AT YOUR OWN RISK. With all programs like this, there is no guarantee that it
 
 # Example
 <p align="center">
-    <img src="https://raw.githubusercontent.com/deadly/valorant-agent-yoinker/main/example.png" alt="Example of how to use valorant agent yoinker">
+    <img src="https://raw.githubusercontent.com/deadly/valorant-agent-yoinker/main/example.png" alt="Example screenshot of VALORANT Agent Yoinker">
 </p>

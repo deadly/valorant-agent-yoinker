@@ -21,7 +21,7 @@
         "brimstone" : "9f0d8ba9-4140-b941-57d3-a7ad57c6b417",
         "astra" : "41fb69c1-4189-7b37-f117-bcaf1e96f1bf",
         "viper" : "707eab51-4836-f488-046a-cda6bf494859",
-        "fade" : "1b47567f-8f7b-444b-aae3-b0c634622d10",
+        "fade" : "dade69b4-4f5a-8528-247b-219e5a1facd6",
         "harbor" : "95b78ed7-4637-86d9-7e41-71ba8c293152"
     },
 
@@ -33,7 +33,8 @@
         "triad": null,
         "port": null,
         "pitt": null,
-        "bonsai": null
+        "bonsai": null,
+        "jam": null
     },
 
     "codes": {
@@ -44,6 +45,7 @@
         "triad": "haven",
         "port": "icebox",
         "pitt": "pearl",
-        "bonsai": "split"
+        "bonsai": "split",
+        "jam": "lotus"
     }
 }

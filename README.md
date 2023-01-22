@@ -2,7 +2,7 @@
 https://discord.gg/faeM7p92pz
 
 # VALORANT Agent Yoinker
-A VALORANT tool for instalocking agents using the VALORANT API (Updated to include harbor).
+A VALORANT tool for instalocking agents using the VALORANT API (Updated to include Lotus).
 
 # How to Use
 **MAKE SURE VALORANT IS OPEN BEFORE RUNNING AGENT YOINKER.** Launch VALORANT and then run the program. Enter your region and agents you want to instalock.

@@ -22,8 +22,6 @@ USE AT YOUR OWN RISK. With all programs like this, there is no guarantee that it
 </p>
 
 #License
-ISC License
-
 Copyright (c) [2023] [deadly]
 
 Permission to use, copy, modify, and/or distribute this software for any

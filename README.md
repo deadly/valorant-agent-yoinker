@@ -21,7 +21,7 @@ USE AT YOUR OWN RISK. With all programs like this, there is no guarantee that it
     <img src="https://raw.githubusercontent.com/deadly/valorant-agent-yoinker/main/example.png" alt="Example screenshot of VALORANT Agent Yoinker">
 </p>
 
-#License
+# License
 Copyright (c) [2023] [deadly]
 
 Permission to use, copy, modify, and/or distribute this software for any

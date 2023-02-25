@@ -8,7 +8,7 @@ A VALORANT tool for instalocking agents using the VALORANT API (Updated to inclu
 **MAKE SURE VALORANT IS OPEN BEFORE RUNNING AGENT YOINKER.** Launch VALORANT and then run the program. Enter your region and agents you want to instalock.
 
 # Regions
-The program will ask you for your region. The available regions are NA, EU, LATAM, BR, AP, KR, and PBE. Type the region that you play on.
+The program will ask you for your region. The available regions are NA, EU, LATAM, BR, AP, KR, and PBE. Type the region that you play on. Here is a list of server locations and their respective region: https://support-valorant.riotgames.com/hc/en-us/articles/360055678634-Server-Select
 
 # How it Works
 Agent selecting is handled via the VALORANT API, which means that this program does not mess with the game's memory or files at all to select the agent. It just sends a request that an agent has been selected when in the pregame state.

@@ -1,57 +1,12 @@
-import json, threading
+import json, time
 from valclient.client import Client
 
 print('Valorant Agent Yoinker by https://github.com/deadly')
 valid = False
+running = True
 agents = {}
 seenMatches = []
 choice = ''
-
-# set_interval Credit: https://stackoverflow.com/users/1909864/stamat
-def set_interval(func, sec):
-    def func_wrapper():
-        set_interval(func, sec)
-        func()
-    t = threading.Timer(sec, func_wrapper)
-    t.start()
-    return t
-
-
-def lock_agent():
-    global seenMatches
-
-    in_menus = True
-
-    while in_menus:
-        try:
-            sessionState = client.fetch_presence(client.puuid)['sessionLoopState']
-            matchID = client.pregame_fetch_match()['ID']
-
-            if (sessionState == "PREGAME" and matchID not in seenMatches):
-                in_menus = False
-                seenMatches.append(matchID)
-                seenMatches.append(matchID)
-                matchInfo = client.pregame_fetch_match(matchID)
-                mapName = matchInfo["MapID"].split('/')[-1].lower()
-                side = lambda teamID: "Defending" if teamID == "Blue" else "Attacking"
-                print(f'Agent Select Found - {mapCodes[mapName].capitalize()} - ' + side(matchInfo['Teams'][0]['TeamID']) + ' first')
-
-                if (maps[mapName] != None):
-                    client.pregame_select_character(maps[mapName])
-                    client.pregame_lock_character(maps[mapName])
-                    print('Agent Locked - ' + list(agents.keys())[list(agents.values()).index(maps[mapName])].capitalize())
-
-
-        except:
-            print('', end='') # Using pass caused weird behavior
-    
-def check_state():
-    try:
-        sessionState = client.fetch_presence(client.puuid)['sessionLoopState']
-        if (sessionState == "MENUS"):
-            lock_agent()
-    except:
-        print('', end='') # Using pass caused weird behavior
 
 with open('data.json', 'r') as f:
     data = json.load(f)
@@ -60,6 +15,8 @@ with open('data.json', 'r') as f:
     ranBefore = data['ran']
     mapCodes = data['codes']
     region = data['region']
+    hoverDelay = data['hoverDelay']
+    lockDelay = data['lockDelay']
 
 
 if (ranBefore == True):
@@ -83,6 +40,7 @@ if (ranBefore == False or choice == 'c'):
                     maps[map] = agents[preferredAgent]
                     valid = True
                 elif (preferredAgent == "none"):
+                    maps[map] = None
                     valid = True
                 else:
                     print("Invalid Agent")
@@ -101,4 +59,25 @@ else:
 
 
 print("Waiting for Agent Select\n")
-set_interval(check_state, 4)
+while running:
+    time.sleep(5)
+    try:
+        sessionState = client.fetch_presence(client.puuid)['sessionLoopState']
+        matchID = client.pregame_fetch_match()['ID']
+
+        if (sessionState == "PREGAME" and matchID not in seenMatches):
+            seenMatches.append(matchID)
+            matchInfo = client.pregame_fetch_match(matchID)
+            mapName = matchInfo["MapID"].split('/')[-1].lower()
+            side = lambda teamID: "Defending" if teamID == "Blue" else "Attacking"
+            
+            print(f'Agent Select Found - {mapCodes[mapName].capitalize()} - ' + side(matchInfo['Teams'][0]['TeamID']) + ' first')
+            if (maps[mapName] != None):
+                time.sleep(hoverDelay)
+                client.pregame_select_character(maps[mapName])
+                time.sleep(lockDelay)
+                client.pregame_lock_character(maps[mapName])
+                print('Agent Locked - ' + list(agents.keys())[list(agents.values()).index(maps[mapName])].capitalize())
+    except Exception as e:
+        if "pre-game" not in str(e):
+            print("An error occurred:", e)

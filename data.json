@@ -1,6 +1,8 @@
 {
     "ran": false,
     "region": null,
+    "hoverDelay": 0,
+    "lockDelay": 0,
     
     "agents": {
         "jett" : "add6443a-41bd-e414-f6ad-e58d267f4e95",

@@ -10,7 +10,7 @@ A VALORANT tool for instalocking agents using the VALORANT API (Updated to inclu
 data.json Settings:
 - hoverDelay: integer in seconds - default 0. Option to put a delay between match found and hovering over the agent in select.
 - lockDelay: integer in seconds - default 0. Option to put a delay between the agent being hovered and then being locked.
-- loopDelay: integer in seconds - default 5. Option to put a delay between every iteration of the while loop. Decrease for faster locks and more predictable lock speeds. Decreasing can potentially lead to more CPU usage. Increasing can potentially lead to less CPU usage.
+- loopDelay: integer in seconds - default 5. Option to put a delay between every iteration of the while loop. Decrease for faster and more predictable lock speeds. Decreasing can potentially lead to more CPU usage. Increasing can potentially lead to less CPU usage.
 # Regions
 The program will ask you for your region. The available regions are NA, EU, LATAM, BR, AP, KR, and PBE. Type the region that you play on. Here is a list of server locations and their respective region: https://support-valorant.riotgames.com/hc/en-us/articles/360055678634-Server-Select
 

@@ -17,6 +17,7 @@ with open('data.json', 'r') as f:
     region = data['region']
     hoverDelay = data['hoverDelay']
     lockDelay = data['lockDelay']
+    loopDelay = data['loopDelay']
 
 
 if (ranBefore == True):
@@ -60,7 +61,7 @@ else:
 
 print("Waiting for Agent Select\n")
 while running:
-    time.sleep(5)
+    time.sleep(loopDelay)
     try:
         sessionState = client.fetch_presence(client.puuid)['sessionLoopState']
         matchID = client.pregame_fetch_match()['ID']

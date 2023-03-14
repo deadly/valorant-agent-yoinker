@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, request
-from valclient.client import Client
+from valclient.client import Client, HandshakeError
 from player import Player
 import json
 
@@ -21,19 +21,42 @@ def save_config():
 
 # creates client and player object
 client = Client(region='na')
-client.activate()
-player = Player(client=client)
+player = None
+
 
 # path for files for front-end
 guiDir = os.path.join(os.path.dirname(__file__), '..', 'front-end')
 
 server = Flask(__name__, static_folder=guiDir, template_folder=guiDir)
 
+
+
+
 @server.route("/")
 def home():
+    try:
+        client.activate()
+        player = Player(client=client)
+    except HandshakeError:
+        return server.redirect("/openval")
     return render_template('index.html', name=player.name)
 
-print(data)
+
+
+@server.route("/openval", methods=["GET", "POST"])
+def open_val():
+    hiddenerror = "Val is still not open"
+    if request.method == "POST":
+        try:
+            client.activate()
+            player = Player(client=client)
+        except HandshakeError:
+            hiddenerror += "!"
+            return render_template("valnotopen.html", hiddenerror=hiddenerror)
+        else:
+            return server.redirect("/")
+    return render_template("valnotopen.html")
+
 
 @server.route("/config", methods=["GET", "POST"])
 def config():

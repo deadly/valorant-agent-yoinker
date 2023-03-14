@@ -34,11 +34,12 @@ server = Flask(__name__, static_folder=guiDir, template_folder=guiDir)
 
 @server.route("/")
 def home():
-    try:
-        client.activate()
-        player = Player(client=client)
-    except HandshakeError:
-        return server.redirect("/openval")
+    if not player:
+        try:
+            client.activate()
+            player = Player(client=client)
+        except HandshakeError:
+            return server.redirect("/openval")
     return render_template('index.html', name=player.name)
 
 

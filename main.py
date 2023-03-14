@@ -1,15 +1,29 @@
 import json, time
+import requests
 from valclient.client import Client
+from zipfile import ZipFile
+import os
+import shutil
+
 
 print('Valorant Agent Yoinker by https://github.com/deadly')
+VERSION = 1.3
 valid = False
 running = True
 agents = {}
 seenMatches = []
 choice = ''
 
+print(os.listdir())
+if "Agent Yoinker U.exe" in os.listdir():
+    if "Agent Yoinker.exe" in os.listdir():
+        os.remove("Agent Yoinker.exe")
+    os.rename("Agent Yoinker U.exe", "Agent Yoinker.exe")
+    print("in")
+
 with open('data.json', 'r') as f:
     data = json.load(f)
+    update = data["checkUpdates"]
     agents = data['agents']
     maps = data['maps']
     ranBefore = data['ran']
@@ -18,6 +32,40 @@ with open('data.json', 'r') as f:
     hoverDelay = data['hoverDelay']
     lockDelay = data['lockDelay']
     loopDelay = data['loopDelay']
+
+if update == True:
+    try:
+        updatedata = requests.get("https://api.github.com/repos/deadly/valorant-agent-yoinker/releases/latest").json()
+        latest = float(updatedata["tag_name"].split("-")[1])
+    except Exception as e: #requests.ConnectionError
+        raise e
+        print("An error occured while checking for updates.")
+    else:
+        if VERSION != latest:
+            uchoice = input("There is a newer version would you like to update? (y or n): ").lower()
+            if uchoice == "y":
+                print("UPDATING...")
+                with open("temp.zip", "wb") as f:
+                    f.write(requests.get(updatedata["assets"][0]["browser_download_url"]).content)
+                
+                with ZipFile("temp.zip", "r") as zfo:
+                    zfo.extractall("./t")
+                os.remove("temp.zip")
+                base = "t/"+os.listdir("t")[0]
+                with open("data.json", "wb") as wf:
+                    with open(f"./{base}/data.json", "rb") as rf:
+                        wf.write(rf.read())
+                
+                with open("Agent Yoinker U.exe", "wb") as wf:
+                    with open(f"./{base}/Agent Yoinker.exe", "rb") as rf:
+                        wf.write(rf.read())
+                shutil.rmtree("t")
+
+                os.startfile("Agent Yoinker U.exe")
+                os._exit(1)
+
+
+
 
 
 if (ranBefore == True):

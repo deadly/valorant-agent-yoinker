@@ -1,4 +1,5 @@
-{
+{   
+    "checkUpdates": true,
     "ran": false,
     "region": null,
     "hoverDelay": 0,

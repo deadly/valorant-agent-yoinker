@@ -1,0 +1,4 @@
+flask
+valclient
+pywebview
+requests

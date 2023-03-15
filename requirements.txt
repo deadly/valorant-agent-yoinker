@@ -2,3 +2,4 @@ flask
 valclient
 pywebview
 requests
+websockets

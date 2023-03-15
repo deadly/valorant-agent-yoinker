@@ -25,8 +25,13 @@ else:
     server.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # disable caching
 
 
+
 @server.route("/")
 def home():
     global firstReq
 
     return render_template('index.html', name=player.name)
+
+@server.route("/settings")
+def settings():
+    return render_template("settings.html", name=player.name)

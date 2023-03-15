@@ -1,0 +1,3 @@
+When built exe runs it creats a folder (bug)
+Topbar never changes from HOME (bug)
+Make it so it stops crashing if val not open and open a webpage that shows an error.

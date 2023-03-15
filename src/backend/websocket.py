@@ -27,17 +27,27 @@ local_headers = {}
 local_headers['Authorization'] = 'Basic ' + base64.b64encode(('riot:' + lockfile['password']).encode()).decode()
 url = f"wss://127.0.0.1:{lockfile['port']}"
 
+running = False
 
 async def ws():
     async with websockets.connect(url, ssl=ssl_context, extra_headers=local_headers) as websocket:
+        
         await websocket.send("[5, \"OnJsonApiEvent\"]")
 
-        while True:
+        while running:
             response = await websocket.recv()
             if len(response) > 0:
                 if pregameMsg in response:
                     print("pregame found")
+        
+        
+        
 
 
 def startWs():
+    running=True
     asyncio.run(ws())
+
+def closeWs():
+    running=False
+

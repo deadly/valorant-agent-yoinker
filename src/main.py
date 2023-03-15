@@ -4,4 +4,4 @@ from backend.websocket import startWs
 
 
 window = webview.create_window('Agent Yoinker', server, height=720, width=1280)
-webview.start(startWs) # start the window along with startWs in a separate thread
+webview.start(startWs, debug=True) # start the window along with startWs in a separate thread

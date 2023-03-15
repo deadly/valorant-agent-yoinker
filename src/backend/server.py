@@ -22,6 +22,8 @@ if getattr(sys, 'frozen', False):
 server = Flask(__name__, static_folder=guiDir, template_folder=guiDir)
 server.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # disable caching
 
+
+
 @server.route("/")
 def home():
     global firstReq

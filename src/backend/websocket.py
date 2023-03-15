@@ -30,6 +30,7 @@ url = f"wss://127.0.0.1:{lockfile['port']}"
 running = False
 
 async def ws():
+    global running
     async with websockets.connect(url, ssl=ssl_context, extra_headers=local_headers) as websocket:
         
         await websocket.send("[5, \"OnJsonApiEvent\"]")
@@ -45,9 +46,11 @@ async def ws():
 
 
 def startWs():
+    global running
     running=True
     asyncio.run(ws())
 
 def closeWs():
+    global running
     running=False
 

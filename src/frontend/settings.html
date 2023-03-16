@@ -6,4 +6,12 @@
 
 {% block content %}
     <h1>Settings</h1>
+    <p>
+        <ul>
+        {% for key in keys %}
+            <li>{{key}}: <input type="text" placeholder="Hey havent figured this out yet" name="{{key}}"></li>
+        {%endfor%}
+
+        </ul> 
+    </p>
 {% endblock %}

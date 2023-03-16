@@ -1,8 +1,8 @@
 import os, sys
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from valclient.client import Client
 from backend.player import Player
-from backend.server_module import get_user_settings
+from backend.server_module import get_user_settings, write_user_settings
 
 
 # creates client and player object
@@ -35,9 +35,19 @@ def home():
     
     return render_template('index.html')
 
-@server.route("/settings")
+@server.route("/settings", methods=('GET', 'POST'))
 def settings():
     settings = data.items()
+    if request.method == 'POST':
+        # get new settings from post request then update data
+        checkUpdates = request.form['checkUpdates']
+        hoverDelay = request.form['hoverDelay']
+        lockDelay = request.form['lockDelay']
+        data['checkUpdates'] = checkUpdates if checkUpdates != '' else data['checkUpdates'] 
+        data['hoverDelay'] = hoverDelay if hoverDelay != '' else data['hoverDelay']
+        data['lockDelay'] = lockDelay if lockDelay != '' else data['lockDelay']
+        write_user_settings(data)
+
     return render_template("settings.html", settings=settings)
 
 # requested endpoint when websocket encounters pregame

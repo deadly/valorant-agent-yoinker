@@ -37,7 +37,7 @@ wsInfo = {
 
 
 
-async def ws():
+async def ws() -> None:
     global wsInfo
     flaskURL = f'http://127.0.0.1:{wsInfo["port"]}'
     async with websockets.connect(url, ssl=ssl_context, extra_headers=local_headers) as websocket:
@@ -51,13 +51,13 @@ async def ws():
                     requests.get(f'{flaskURL}/pregame_found')
         
         
-def startWs(port):
+def startWs(port: str) -> None:
     global wsInfo
     wsInfo['running'] = True
     wsInfo['port'] = port
     asyncio.run(ws())
 
-def closeWs():
+def closeWs() -> None:
     global wsInfo
     wsInfo['running'] = False
 

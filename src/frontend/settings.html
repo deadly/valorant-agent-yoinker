@@ -5,13 +5,19 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Settings</h1>
-    <p>
-        <ul>
-        {% for key, value in settings %}
-            <li>{{key}}: <input type="text" placeholder="{{value}}" name="{{value}}"></li>
-        {%endfor%}
-
-        </ul> 
-    </p>
+    <div class="d-flex justify-content-center flex-nowrap">
+        <div class="mx-5 my-5 px-5" style="border-style:solid; border-width: thin; border-color: ghostwhite; border-radius: 25px;">
+            <form>
+                <div class="form-group">
+                    <fieldset>
+                        {% for key, value in settings %}
+                        <label class="me-auto col-form-label mt-3" for="{{key}}">{{key}}</label>
+                        <input type="text" class="me-auto form-control" placeholder={{value}} id="{{key}}">
+                        {%endfor%}
+                    </fieldset>
+                    <button type="submit" class="col align-self-center mt-4 btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock %}

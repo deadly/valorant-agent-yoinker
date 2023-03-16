@@ -30,7 +30,12 @@ local_headers['Authorization'] = 'Basic ' + base64.b64encode(('riot:' + lockfile
 url = f"wss://127.0.0.1:{lockfile['port']}"
 
 # dictionary with important values for the websocket to use
-wsInfo = {'port': '','running': False}
+wsInfo = {
+    'port': '',
+    'running': False
+}
+
+
 
 async def ws():
     global wsInfo

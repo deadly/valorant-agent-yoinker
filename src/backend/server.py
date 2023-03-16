@@ -2,6 +2,7 @@ import os, sys
 from flask import Flask, render_template
 from valclient.client import Client
 from backend.player import Player
+from backend.server_module import get_user_settings
 
 
 # creates client and player object
@@ -22,17 +23,23 @@ if getattr(sys, 'frozen', False):
 server = Flask(__name__, static_folder=guiDir, template_folder=guiDir)
 server.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # disable caching
 
+data = get_user_settings()
 
+@server.context_processor
+def inject_name():
+    return dict(name=player.name) #makes it so we dont have to pass name every time
 
 @server.route("/")
 def home():
     global firstReq
     
-    return render_template('index.html', name=player.name)
+    return render_template('index.html')
 
 @server.route("/settings")
 def settings():
-    return render_template("settings.html", name=player.name)
+    keys = [i for i in data.keys()]
+    values = [i for i in data.values()]
+    return render_template("settings.html", keys=keys, values=values)
 
 # requested endpoint when websocket encounters pregame
 @server.route("/pregame_found", methods=['GET'])

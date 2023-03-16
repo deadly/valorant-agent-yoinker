@@ -40,9 +40,9 @@ def settings():
     settings = data.items()
     if request.method == 'POST':
         # get new settings from post request then update data
-        checkUpdates = request.form['checkUpdates']
-        hoverDelay = request.form['hoverDelay']
-        lockDelay = request.form['lockDelay']
+        checkUpdates = request.form['checkUpdates'] #need to make this a checkbox or dropdown | True or False
+        hoverDelay = int(request.form['hoverDelay'])
+        lockDelay = int(request.form['lockDelay'])
         data['checkUpdates'] = checkUpdates if checkUpdates != '' else data['checkUpdates'] 
         data['hoverDelay'] = hoverDelay if hoverDelay != '' else data['hoverDelay']
         data['lockDelay'] = lockDelay if lockDelay != '' else data['lockDelay']

@@ -25,7 +25,7 @@ def get_agents() -> dict:
     agentsData = requests.get("https://valorant-api.com/v1/agents", params={'isPlayableCharacter': True}).json()['data']
     
     for agent in agentsData:
-        agentsMap[agentsData['displayName'] = agentsData['uuid']
+        agentsMap[agent['displayName']] = agent['uuid']
     
     return agentsMap
 
@@ -50,4 +50,5 @@ def get_maps() -> dict:
     mapsData = requests.get("https://valorant-api.com/v1/maps").json()['data']
 
     for map in mapsData:
-    maps[map['']]
+        maps[map['']]
+        #not gonna change it but you should use something like _map or find a diff name just better practice

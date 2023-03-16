@@ -43,7 +43,7 @@ async def ws():
             response = await websocket.recv()
             if len(response) > 0:
                 if pregameMsg in response:
-                    requests.get(f'http://127.0.0.1:{wsInfo["port"]}/pregame_found')
+                    requests.get(f'{flaskURL}/pregame_found')
         
         
 def startWs(port):

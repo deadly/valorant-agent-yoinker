@@ -33,3 +33,9 @@ def home():
 @server.route("/settings")
 def settings():
     return render_template("settings.html", name=player.name)
+
+# endpoint that gets request when websocket encounters pregame
+@server.route("/pregame_found", methods=['GET'])
+def pregame_found():
+    print("the websocket has encountered pregame")
+    return '', 204

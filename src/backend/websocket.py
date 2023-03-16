@@ -3,6 +3,8 @@ import ssl
 import websockets
 import base64
 import os
+import requests
+
 
 lockfile = {}
 pregameMsg = "/riot-messaging-service/v1/message/ares-pregame/pregame/v1/matches/"
@@ -27,30 +29,30 @@ local_headers = {}
 local_headers['Authorization'] = 'Basic ' + base64.b64encode(('riot:' + lockfile['password']).encode()).decode()
 url = f"wss://127.0.0.1:{lockfile['port']}"
 
-running = False
+# dictionary with important values for the websocket to use
+wsInfo = {'port': '','running': False}
 
 async def ws():
-    global running
+    global wsInfo
+    flaskURL = f'http://127.0.0.1:{wsInfo["port"]}'
     async with websockets.connect(url, ssl=ssl_context, extra_headers=local_headers) as websocket:
         
         await websocket.send("[5, \"OnJsonApiEvent\"]")
 
-        while running:
+        while wsInfo['running']:
             response = await websocket.recv()
             if len(response) > 0:
                 if pregameMsg in response:
-                    print("pregame found")
+                    requests.get(f'http://127.0.0.1:{wsInfo["port"]}/pregame_found')
         
         
-        
-
-
-def startWs():
-    global running
-    running=True
+def startWs(port):
+    global wsInfo
+    wsInfo['running'] = True
+    wsInfo['port'] = port
     asyncio.run(ws())
 
 def closeWs():
-    global running
-    running=False
+    global wsInfo
+    wsInfo['running'] = False
 

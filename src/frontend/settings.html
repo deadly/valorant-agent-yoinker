@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Index{% endblock %}
-
+{% set active_page = "settings" %}
 {% block html_head %}
 {% endblock %}
 
@@ -8,8 +8,8 @@
     <h1>Settings</h1>
     <p>
         <ul>
-        {% for key in keys %}
-            <li>{{key}}: <input type="text" placeholder="Hey havent figured this out yet" name="{{key}}"></li>
+        {% for key, value in settings %}
+            <li>{{key}}: <input type="text" placeholder="{{value}}" name="{{value}}"></li>
         {%endfor%}
 
         </ul> 

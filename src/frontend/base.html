@@ -16,14 +16,14 @@
         <div class="collapse navbar-collapse" id="navbarColor02" style ="left:80px">
           <ul class="navbar-nav mx-auto">
             <li class="nav-item">
-              <a class="nav-link active" href="{{ url_for('home') }}">HOME
+              <a class="nav-link {{ 'active' if active_page == 'home' else '' }}" href="{{ url_for('home') }}">HOME
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('settings') }}">SETTINGS</a>
+              <a class="nav-link {{ 'active' if active_page == 'settings' else '' }}" href="{{ url_for('settings') }}">SETTINGS</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">INFO</a>
+              <a class="nav-link {{ 'active' if active_page == 'info' else '' }}" href="#">INFO</a>
             </li>
           </ul>
         </div>

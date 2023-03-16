@@ -37,9 +37,8 @@ def home():
 
 @server.route("/settings")
 def settings():
-    keys = [i for i in data.keys()]
-    values = [i for i in data.values()]
-    return render_template("settings.html", keys=keys, values=values)
+    settings = data.items()
+    return render_template("settings.html", settings=settings)
 
 # requested endpoint when websocket encounters pregame
 @server.route("/pregame_found", methods=['GET'])

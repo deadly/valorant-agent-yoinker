@@ -58,6 +58,10 @@ def settings():
         write_user_settings(data)
     return render_template("settings.html", settings=settings)
 
+@server.route("/info")
+def info():
+    return render_template("info.html")
+
 # requested endpoint when websocket encounters pregame
 @server.route("/pregame_found", methods=['GET'])
 def pregame_found():

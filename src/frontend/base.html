@@ -23,7 +23,7 @@
               <a class="nav-link {{ 'active' if active_page == 'settings' else '' }}" href="{{ url_for('settings') }}">SETTINGS</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {{ 'active' if active_page == 'info' else '' }}" href="#">INFO</a>
+              <a class="nav-link {{ 'active' if active_page == 'info' else '' }}" href="{{ url_for('info') }}">INFO</a>
             </li>
           </ul>
         </div>

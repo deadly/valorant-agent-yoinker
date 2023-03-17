@@ -10,7 +10,7 @@
             <form action="{{ url_for('settings')}}" method="post">
                 <div class="form-group">
                     <fieldset>
-                        {% for key, value in settings %}
+                        {% for key, value in settings if key != 'mapPreferences' %}
                         <label class="me-auto col-form-label mt-3" for="{{key}}">{{key}}</label>
                         <input type="{{ 'text' if key=='checkUpdates' else 'number' }}" class="me-auto form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}"" id="{{key}}">
                         {%endfor%}

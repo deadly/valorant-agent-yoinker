@@ -5,5 +5,30 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Home</h1>
+<div class="d-flex justify-content-center flex-nowrap">
+    <div class="mx-5 my-5 px-5" style="border-style:solid; border-width: thin; border-color: ghostwhite; border-radius: 25px; padding-top: 20px;">
+        <form action="{{ url_for('home')}}" method="post">
+            <div class="form-group">
+                <fieldset>
+                    <div class="row">
+                        {% for key, value in settings %}
+                        <div class="col-md-6">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" style="min-width: 150px;">{{maps[key]}}</span>
+                                <select class="form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}" id="{{key}}">
+                                    {% for agent in agents %}
+                                    <option value="{{agent}}">{{agent}}</option>
+                                    {%endfor%}
+                                </select>                     
+                            </div>
+                        </div>
+                        {%endfor%}
+                    </div>
+                </fieldset>
+                <button type="submit" class="col align-self-center mt-4 btn btn-primary">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 {% endblock %}

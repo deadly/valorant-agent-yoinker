@@ -1,0 +1,16 @@
+{
+    "checkUpdates": "True",
+    "hoverDelay": 0,
+    "lockDelay": 0,
+    "mapPreferences": {
+        "ascent": null,
+        "duality": null,
+        "foxtrot": null,
+        "canyon": null,
+        "triad": null,
+        "port": null,
+        "pitt": null,
+        "bonsai": null,
+        "jam": null
+    }
+}

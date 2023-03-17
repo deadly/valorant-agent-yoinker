@@ -2,7 +2,7 @@ import os, sys
 from flask import Flask, render_template, request
 from valclient.client import Client
 from backend.player import Player
-from backend.server_module import get_user_settings, write_user_settings, get_agents
+from backend.server_module import get_user_settings, write_user_settings, get_agents, get_maps
 
 
 # creates client and player object
@@ -32,8 +32,8 @@ def inject_name():
 @server.route("/")
 def home():
     global firstReq
-    get_agents()
-    return render_template('index.html')
+    settings = get_user_settings()['mapPreferences'].items()
+    return render_template('index.html', settings=settings, agents=get_agents(), maps=get_maps())
 
 @server.route("/settings", methods=('GET', 'POST'))
 def settings():

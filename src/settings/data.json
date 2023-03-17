@@ -1,5 +1,5 @@
 {
-    "checkUpdates": "True",
+    "checkUpdates": false,
     "hoverDelay": 0,
     "lockDelay": 0,
     "mapPreferences": {

@@ -52,11 +52,10 @@ def settings():
         checkUpdates = request.form['checkUpdates'] #need to make this a checkbox or dropdown | True or False
         hoverDelay = int(request.form['hoverDelay'])
         lockDelay = int(request.form['lockDelay'])
-        data['checkUpdates'] = checkUpdates if checkUpdates != '' else data['checkUpdates'] 
+        data['checkUpdates'] = True if checkUpdates.lower() == "true" else False
         data['hoverDelay'] = hoverDelay if hoverDelay != '' else data['hoverDelay']
         data['lockDelay'] = lockDelay if lockDelay != '' else data['lockDelay']
         write_user_settings(data)
-
     return render_template("settings.html", settings=settings)
 
 # requested endpoint when websocket encounters pregame

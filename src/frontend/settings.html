@@ -12,7 +12,19 @@
                     <fieldset>
                         {% for key, value in settings if key != 'mapPreferences' %}
                         <label class="me-auto col-form-label mt-3" for="{{key}}">{{key}}</label>
-                        <input type="{{ 'text' if key=='checkUpdates' else 'number' }}" class="me-auto form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}"" id="{{key}}">
+                            {% if key =='checkUpdates' %}
+                                <select class="form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}" id="{{key}}">
+                                    {% if value == True %}
+                                        <option value="{{value}}" selected>{{value}}</option>
+                                        <option value="False">False</option>
+                                    {% else %}
+                                        <option value="{{value}}" selected>{{value}}</option>
+                                        <option value="True">True</option>
+                                    {% endif %}
+                                </select>
+                            {% else %}
+                            <input type="number" class="me-auto form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}"" id="{{key}}">
+                            {% endif %}
                         {%endfor%}
                     </fieldset>
                     <button type="submit" class="col align-self-center mt-4 btn btn-primary">Update</button>

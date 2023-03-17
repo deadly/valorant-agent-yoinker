@@ -17,7 +17,11 @@
                                 <span class="input-group-text" style="min-width: 150px;">{{maps[key]}}</span>
                                 <select class="form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}" id="{{key}}">
                                     {% for agent in agents %}
-                                    <option value="{{agent}}">{{agent}}</option>
+                                        {% if agent == value %}
+                                            <option value="{{agent}}" selected>{{agent}}</option>
+                                        {% else %}
+                                            <option value="{{agent}}">{{agent}}</option>
+                                        {% endif %}
                                     {%endfor%}
                                 </select>                     
                             </div>

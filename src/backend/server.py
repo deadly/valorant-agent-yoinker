@@ -29,9 +29,18 @@ data = get_user_settings()
 def inject_name():
     return dict(name=player.name) #makes it so we dont have to pass name every time
 
-@server.route("/")
+@server.route("/", methods=('GET', 'POST'))
 def home():
     global firstReq
+    if request.method == 'POST':
+        allsettings = get_user_settings()
+        mapsettings = allsettings['mapPreferences']
+        for _map in mapsettings.keys():
+            req = request.form[_map]
+            if req.lower() == "none":
+                req = None
+            mapsettings[_map] = req
+        write_user_settings(allsettings)
     settings = get_user_settings()['mapPreferences'].items()
     return render_template('index.html', settings=settings, agents=get_agents(), maps=get_maps())
 

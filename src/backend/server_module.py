@@ -24,24 +24,26 @@ def get_agents() -> dict:
 
 def get_maps() -> dict:
     mapCodes =  {
-        "ascent": "ascent",
-        "bind": "duality",
-        "breeze": "foxtrot",
-        "fracture": "canyon",
-        "haven": "triad",
-        "icebox": "port",
-        "pearl": "pitt",
-        "split": "bonsai",
-        "lotus": "jam"
+        "Ascent": "ascent",
+        "Bind": "duality",
+        "Breeze": "foxtrot",
+        "Fracture": "canyon",
+        "Haven": "triad",
+        "Icebox": "port",
+        "Pearl": "pitt",
+        "Split": "bonsai",
+        "Lotus": "jam"
     }
-
     
-    # request all information for maps and then create a dictionary containing 
-
+    # request all information for maps and create a dictionary
 
     maps = {}
     mapsData = requests.get("https://valorant-api.com/v1/maps").json()['data']
 
-    for map in mapsData:
-        maps[map['']]
-        #not gonna change it but you should use something like _map or find a diff name just better practice
+    for mapInfo in mapsData:
+        if (mapInfo['displayName'] == 'The Range'):
+            continue
+
+        maps[mapInfo['displayName']] = mapCodes[mapInfo['displayName']] # create a dictionary in map name:map code format
+    
+    return maps

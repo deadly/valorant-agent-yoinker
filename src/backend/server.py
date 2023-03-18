@@ -2,7 +2,7 @@ import os, sys
 from flask import Flask, render_template, request
 from valclient.client import Client
 from backend.player import Player
-from backend.server_module import get_user_settings, write_user_settings, get_agents, get_maps
+from backend.server_module import *
 
 
 # creates client and player object
@@ -42,7 +42,12 @@ def home():
             mapsettings[_map] = req
         write_user_settings(allsettings)
     settings = get_user_settings()['mapPreferences'].items()
-    return render_template('index.html', settings=settings, agents=get_agents(), maps=get_maps())
+    return render_template(
+        'index.html', 
+        settings=settings,
+        agents=get_agents(), 
+        maps=get_maps(), 
+    )
 
 @server.route("/settings", methods=('GET', 'POST'))
 def settings():
@@ -56,7 +61,7 @@ def settings():
         data['hoverDelay'] = hoverDelay if hoverDelay != '' else data['hoverDelay']
         data['lockDelay'] = lockDelay if lockDelay != '' else data['lockDelay']
         write_user_settings(data)
-    return render_template("settings.html", settings=settings)
+    return render_template("settings.html", settings=settings, regions=get_regions())
 
 @server.route("/info")
 def info():

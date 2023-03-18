@@ -22,8 +22,18 @@
                                         <option value="True">True</option>
                                     {% endif %}
                                 </select>
+                            {% elif key == 'region' %}
+                                <select class="form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}" id="{{key}}">
+                                    {% for region in regions %}
+                                        {% if region == value %}
+                                            <option value="{{region}}" selected>{{region}}</option>
+                                        {% else %}
+                                            <option value="{{region}}">{{region}}</option>
+                                        {% endif %}
+                                    {%endfor%}
+                                </select>
                             {% else %}
-                            <input type="number" class="me-auto form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}"" id="{{key}}">
+                                <input type="number" class="me-auto form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}"" id="{{key}}">
                             {% endif %}
                         {%endfor%}
                     </fieldset>

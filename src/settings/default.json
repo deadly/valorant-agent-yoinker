@@ -1,16 +1,17 @@
 {
-    "checkUpdates": "True",
+    "checkUpdates": true,
+    "region": null,
     "hoverDelay": 0,
     "lockDelay": 0,
     "mapPreferences": {
-        "ascent": null,
-        "duality": null,
-        "foxtrot": null,
-        "canyon": null,
-        "triad": null,
-        "port": null,
-        "pitt": null,
-        "bonsai": null,
-        "jam": null
+        "/Game/Maps/Ascent/Ascent": null,
+        "/Game/Maps/Duality/Duality": null,
+        "/Game/Maps/Foxtrot/Foxtrot": null,
+        "/Game/Maps/Canyon/Canyon": null,
+        "/Game/Maps/Triad/Triad": null,
+        "/Game/Maps/Port/Port": null,
+        "/Game/Maps/Pitt/Pitt": null,
+        "/Game/Maps/Bonsai/Bonsai": null,
+        "/Game/Maps/Jam/Jam": null
     }
 }

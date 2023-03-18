@@ -1,16 +1,17 @@
 {
-    "checkUpdates": false,
+    "checkUpdates": true,
+    "region": null,
     "hoverDelay": 0,
     "lockDelay": 0,
     "mapPreferences": {
-        "/Game/Maps/Ascent/Ascent": "Breach",
-        "/Game/Maps/Duality/Duality": "KAY/O",
-        "/Game/Maps/Foxtrot/Foxtrot": "KAY/O",
-        "/Game/Maps/Canyon/Canyon": "Gekko",
-        "/Game/Maps/Triad/Triad": "Raze",
-        "/Game/Maps/Port/Port": "Breach",
-        "/Game/Maps/Pitt/Pitt": "Raze",
-        "/Game/Maps/Bonsai/Bonsai": "Fade",
-        "/Game/Maps/Jam/Jam": "Breach"
+        "/Game/Maps/Ascent/Ascent": null,
+        "/Game/Maps/Duality/Duality": null,
+        "/Game/Maps/Foxtrot/Foxtrot": null,
+        "/Game/Maps/Canyon/Canyon": null,
+        "/Game/Maps/Triad/Triad": null,
+        "/Game/Maps/Port/Port": null,
+        "/Game/Maps/Pitt/Pitt": null,
+        "/Game/Maps/Bonsai/Bonsai": null,
+        "/Game/Maps/Jam/Jam": null
     }
 }

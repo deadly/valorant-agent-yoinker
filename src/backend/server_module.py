@@ -13,7 +13,7 @@ def write_user_settings(data: dict) -> None:
         json.dump(data, f, indent=4)
 
 def get_agents() -> dict:
-    # request all information for current agents then create a map of name to uuid
+    # request all information for current agents then create a dictionary of name to uuid
     agentsMap = {'None': 'None'}
     agentsData = requests.get("https://valorant-api.com/v1/agents", params={'isPlayableCharacter': True}).json()['data']
     
@@ -23,7 +23,7 @@ def get_agents() -> dict:
     return agentsMap
 
 def get_maps() -> dict:
-    # request all information for maps and create a dictionary
+    # request all information for maps and create a dictionary of mapUrl to displayName
 
     maps = {}
     mapsData = requests.get("https://valorant-api.com/v1/maps").json()['data']
@@ -35,3 +35,14 @@ def get_maps() -> dict:
         maps[mapInfo['mapUrl']] = mapInfo['displayName'] # create a dictionary in map codename:map displayname format
     
     return maps
+
+def get_regions() -> dict:
+    return [
+        "NA", 
+        "EU",
+        "LATAM",
+        "BR",
+        "AP",
+        "KR",
+        "PBE"
+    ]

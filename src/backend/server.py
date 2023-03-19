@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, time
 from flask import Flask, render_template, request, url_for, redirect
 from valclient.client import Client
 from backend.player import Player
@@ -51,7 +51,7 @@ def regionPopup():
 @server.route("/", methods=('GET', 'POST'))
 def home():
     global firstReq
-    
+
     if data['region'] == None:
         return redirect('region')
     elif (firstReq == True) and (data['region'] != None):
@@ -94,8 +94,24 @@ def settings():
 def info():
     return render_template("info.html")
 
-# requested endpoint when websocket encounters pregame
+#equested endpoint when websocket encounters pregame
 @server.route("/pregame_found", methods=['GET'])
 def pregame_found():
+    settings = get_user_settings()
+    agents = get_agents()
+    player.acknowledge_current_match()
+    preferredAgent = agents[settings['mapPreferences'][player.currentMatch['map']]]
+
+    print(preferredAgent)
+    time.sleep(settings['hoverDelay'])
+    player.hover_agent(preferredAgent)
+    time.sleep(settings['lockDelay'])
+    player.lock_agent(preferredAgent)
+
     print("the websocket has encountered pregame")
-    return '', 204
+    return '', 200
+
+@server.route("/get_match_info", methods=['GET'])
+def get_match_info():
+    return [player.currentMatch, player.seenMatches]
+

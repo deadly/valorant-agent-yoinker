@@ -4,6 +4,7 @@ import websockets
 import base64
 import os
 import requests
+import json
 
 
 lockfile = {}
@@ -36,7 +37,6 @@ wsInfo = {
 }
 
 
-
 async def ws() -> None:
     global wsInfo
     flaskURL = f'http://127.0.0.1:{wsInfo["port"]}'
@@ -48,7 +48,11 @@ async def ws() -> None:
             response = await websocket.recv()
             if len(response) > 0:
                 if pregameMsg in response:
-                    requests.get(f'{flaskURL}/pregame_found')
+                    r = json.loads(requests.get(f'{flaskURL}/get_match_info').content)
+                    currentMatch = r[0]
+                    seenMatches = r[1]
+                    if currentMatch['ID'] not in seenMatches:
+                        requests.get(f'{flaskURL}/pregame_found')
         
         
 def startWs(port: str) -> None:

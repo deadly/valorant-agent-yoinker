@@ -4,7 +4,7 @@ class Player:
         self.puuid = self.client.puuid
         self.name = self.set_name(self.puuid)
         self.seenMatches = [] # array of match IDs
-        self.currentMatch = None # contains ALL information about current match
+        self.currentMatch = {'map': 'current map', 'ID': 'current ID'}
 
     def set_name(self, puuid):
         playerData = self.client.put(
@@ -23,9 +23,12 @@ class Player:
     
     def acknowledge_current_match(self):
         # append current match ID to seenMatches
-        self.seenMatches.append(self.client.pregame_fetch_match()['ID'])
+        matchInfo = self.client.pregame_fetch_match()
+        self.seenMatches.append(matchInfo['ID'])
         # update currentMatch to the current pregame
-        self.currentMatch = self.client.pregame_fetch_match()
+        self.currentMatch['map'] = matchInfo['MapID']
+        self.currentMatch['ID'] = matchInfo['ID']
+    
     
     def get_side(self):
         teamID = self.currentMatch['Teams'][0]['TeamID']

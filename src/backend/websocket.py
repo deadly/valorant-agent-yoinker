@@ -4,7 +4,6 @@ import websockets
 import base64
 import os
 import requests
-import json
 
 
 lockfile = {}

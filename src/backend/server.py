@@ -8,8 +8,8 @@ from backend.server_module import *
 # creates client and player object
 client = ''
 player = ''
-
 # initialization variables
+toggle_on = True # keep track of instalock toggle
 firstReq = True # variable to keep track if GET / has been seen before
 
 # path for files for front-end
@@ -74,6 +74,7 @@ def home():
         settings=settings,
         agents=get_agents(), 
         maps=get_maps(), 
+        toggle_on=toggle_on
     )
 
 @server.route("/settings", methods=('GET', 'POST'))
@@ -98,16 +99,16 @@ def info():
 @server.route("/pregame_found", methods=['GET'])
 def pregame_found():
     try:
-        settings = get_user_settings()
-        agents = get_agents()
-        player.acknowledge_current_match()
-        preferredAgent = agents[settings['mapPreferences'][player.currentMatch['map']]]
+        if toggle_on:
+            settings = get_user_settings()
+            agents = get_agents()
+            player.acknowledge_current_match()
+            preferredAgent = agents[settings['mapPreferences'][player.currentMatch['map']]]
 
-        time.sleep(settings['hoverDelay'])
-        player.hover_agent(preferredAgent)
-        time.sleep(settings['lockDelay'])
-        player.lock_agent(preferredAgent)
-
+            time.sleep(settings['hoverDelay'])
+            player.hover_agent(preferredAgent)
+            time.sleep(settings['lockDelay'])
+            player.lock_agent(preferredAgent)
         return '', 200
     except Exception as e:
         return '', 204
@@ -125,3 +126,9 @@ def get_seen_matches():
         return player.get_seen_matches()
     except Exception as e:
         return '', 204
+    
+@server.route('/toggle', methods=['GET', 'POST'])
+def toggle():
+    global toggle_on
+    toggle_on = not toggle_on
+    return '', 200

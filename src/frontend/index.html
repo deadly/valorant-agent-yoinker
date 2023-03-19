@@ -3,10 +3,10 @@
 {% set active_page = "home" %}
 {% block html_head %}
 {% endblock %}
-
 {% block content %}
+
 <div class="d-flex justify-content-center flex-nowrap">
-    <div class="mx-5 my-5 px-5" style="border-style:solid; border-width: thin; border-color: ghostwhite; border-radius: 25px; padding-top: 20px;">
+    <div class="mx-5 my-5 px-5" style="border-style:solid; border-width: thin; border-color: ghostwhite; border-radius: 25px; padding-top: 20px; position:relative;">
         <form action="{{ url_for('home')}}" method="post">
             <div class="form-group">
                 <fieldset>
@@ -32,7 +32,18 @@
                 <button type="submit" class="col align-self-center mt-4 btn btn-primary">Update</button>
             </div>
         </form>
+        <div class="custom-control custom-switch" style="position: absolute; bottom: -30px; left: 10px;">
+            <input onchange="updateToggle()" type="checkbox" class="custom-control-input" id="customSwitch1" {% if toggle_on %}checked{% endif %}>
+            <label class="custom-control-label" for="customSwitch1">Instalock</label>
+        </div>
     </div>
 </div>
-
+{% endblock %}
+{% block javascript %}
+    <script>
+        // when the page loads, get the current status of the toggle from the endpoint
+        function updateToggle() {
+            $.get("{{url_for('toggle')}}", () => {});
+        }
+    </script>
 {% endblock %}

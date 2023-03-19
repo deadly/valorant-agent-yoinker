@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Region{% endblock %}
+{% block html_head %}
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center h-100 text-center">
+  <div class="mx-5 my-5 px-5">
+    <div class="row">
+      <div class="col-md-12">
+        <p class="mb-0 my-3">In order to use Agent Yoinker, you must first set your region</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mx-auto">
+        <form action="{{ url_for('regionPopup')}}" method="post">
+          <div class="form-group">
+            <fieldset>
+              <select class="form-control" name="region" value="{{value}}" placeholder="{{value}}" id="region">
+                {% for region in regions %}
+                <option value="{{region}}">{{region}}</option>
+                {%endfor%}
+              </select>
+            </fieldset>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="mt-4 btn btn-primary">Set Region</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+
+

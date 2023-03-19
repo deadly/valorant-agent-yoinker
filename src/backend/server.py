@@ -1,14 +1,13 @@
 import os, sys
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for, redirect
 from valclient.client import Client
 from backend.player import Player
 from backend.server_module import *
 
 
 # creates client and player object
-client = Client(region='na')
-client.activate()
-player = Player(client=client)
+client = ''
+player = ''
 
 # initialization variables
 firstReq = True # variable to keep track if GET / has been seen before
@@ -25,13 +24,41 @@ server.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # disable caching
 
 data = get_user_settings()
 
+def init_player():
+    global client, player
+
+    client = Client(region=data['region'].lower())
+    client.activate()
+    player = Player(client=client)
+
 @server.context_processor
 def inject_name():
-    return dict(name=player.name) #makes it so we dont have to pass name every time
+    try:
+        return dict(name=player.name) #makes it so we dont have to pass name every time
+    except:
+        return dict(name='Set Region')
+
+
+@server.route("/region", methods=('GET', 'POST'))
+def regionPopup():
+    if request.method == 'POST':
+        region = request.form['region']
+        data['region'] = region
+        write_user_settings(data)
+        return redirect('/')
+    return render_template('region.html', regions=get_regions())
 
 @server.route("/", methods=('GET', 'POST'))
 def home():
     global firstReq
+    
+    if data['region'] == None:
+        return redirect('region')
+    elif (firstReq == True) and (data['region'] != None):
+        init_player()
+    
+    firstReq = False
+
     if request.method == 'POST':
         allsettings = get_user_settings()
         mapsettings = allsettings['mapPreferences']

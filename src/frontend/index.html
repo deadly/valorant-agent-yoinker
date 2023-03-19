@@ -36,14 +36,30 @@
             <input onchange="updateToggle()" type="checkbox" class="custom-control-input" id="customSwitch1" {% if toggle_on %}checked{% endif %}>
             <label class="custom-control-label" for="customSwitch1">Instalock</label>
         </div>
+        <p id="currentMap" style="position: absolute; bottom: -47px; left: 436px;">
+            {{currentMap}}
+        </p>
+        <p id="currentTeam" style="position: absolute; bottom: -47px; left: 830px;">
+            {{currentTeam}}
+        </p>
     </div>
 </div>
 {% endblock %}
 {% block javascript %}
     <script>
-        // when the page loads, get the current status of the toggle from the endpoint
+        function updateMapTeam() {
+            $.get("{{url_for('updateMapTeam')}}", data => {
+                if (data != '')
+                    $('#currentMap').text(data[0]);
+                    $('#currentTeam').text(data[1]);
+            })
+        }
+
         function updateToggle() {
             $.get("{{url_for('toggle')}}", () => {});
         }
+
+        setInterval(updateMapTeam, 7500);
+
     </script>
 {% endblock %}

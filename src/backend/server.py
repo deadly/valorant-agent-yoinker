@@ -11,7 +11,8 @@ player = ''
 # initialization variables
 toggle_on = True # keep track of instalock toggle
 firstReq = True # variable to keep track if GET / has been seen before
-
+currentMap = "Map"
+currentTeam = "First Side"
 # path for files for front-end
 guiDir = os.path.join(os.path.dirname(__file__), '..', 'frontend')
 
@@ -74,7 +75,9 @@ def home():
         settings=settings,
         agents=get_agents(), 
         maps=get_maps(), 
-        toggle_on=toggle_on
+        toggle_on=toggle_on,
+        currentMap=currentMap,
+        currentTeam=currentTeam
     )
 
 @server.route("/settings", methods=('GET', 'POST'))
@@ -132,3 +135,11 @@ def toggle():
     global toggle_on
     toggle_on = not toggle_on
     return '', 200
+
+@server.route('/updateMapTeam', methods=['GET'])
+def updateMapTeam():
+    sideMap = player.get_side_map()
+    if (sideMap):
+        sideMap[0] = get_maps()[sideMap[0]]
+        return sideMap
+    return '', '204'

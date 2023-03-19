@@ -35,11 +35,15 @@ class Player:
     def get_seen_matches(self):
         return self.seenMatches
 
-    def get_side(self):
-        teamID = self.currentMatch['Teams'][0]['TeamID']
+    def get_side_map(self):
+        try:
+            matchInfo = self.client.pregame_fetch_match()
+            teamID = matchInfo['Teams'][0]['TeamID']
 
-        if (teamID == 'Blue'):
-            return 'Defending'
-        else:
-            return 'Attacking'
+            if (teamID == 'Blue'):
+                return [matchInfo['MapID'], 'Defending']
+            else:
+                return [matchInfo['MapID'], 'Attacking']
+        except:
+            return None
 

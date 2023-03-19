@@ -48,12 +48,14 @@ async def ws() -> None:
             response = await websocket.recv()
             if len(response) > 0:
                 if pregameMsg in response:
-                    r = json.loads(requests.get(f'{flaskURL}/get_match_info').content)
-                    currentMatch = r[0]
-                    seenMatches = r[1]
-                    if currentMatch['ID'] not in seenMatches:
-                        requests.get(f'{flaskURL}/pregame_found')
-        
+                    try:
+                        matchInfo = requests.get(f'{flaskURL}/get_match_info').json()
+                        seenMatches = requests.get(f'{flaskURL}/get_seen_matches').json()
+                        if matchInfo['ID'] not in seenMatches:
+                            requests.get(f'{flaskURL}/pregame_found')
+                    except:
+                        pass
+
         
 def startWs(port: str) -> None:
     global wsInfo

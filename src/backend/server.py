@@ -97,21 +97,31 @@ def info():
 #equested endpoint when websocket encounters pregame
 @server.route("/pregame_found", methods=['GET'])
 def pregame_found():
-    settings = get_user_settings()
-    agents = get_agents()
-    player.acknowledge_current_match()
-    preferredAgent = agents[settings['mapPreferences'][player.currentMatch['map']]]
+    try:
+        settings = get_user_settings()
+        agents = get_agents()
+        player.acknowledge_current_match()
+        preferredAgent = agents[settings['mapPreferences'][player.currentMatch['map']]]
 
-    print(preferredAgent)
-    time.sleep(settings['hoverDelay'])
-    player.hover_agent(preferredAgent)
-    time.sleep(settings['lockDelay'])
-    player.lock_agent(preferredAgent)
+        time.sleep(settings['hoverDelay'])
+        player.hover_agent(preferredAgent)
+        time.sleep(settings['lockDelay'])
+        player.lock_agent(preferredAgent)
 
-    print("the websocket has encountered pregame")
-    return '', 200
+        return '', 200
+    except Exception as e:
+        return '', 204
 
 @server.route("/get_match_info", methods=['GET'])
 def get_match_info():
-    return [player.currentMatch, player.seenMatches]
+    try:
+        return player.get_current_match()
+    except Exception as e:
+        return '', 204
 
+@server.route("/get_seen_matches", methods=['GET'])
+def get_seen_matches():
+    try:
+        return player.get_seen_matches()
+    except Exception as e:
+        return '', 204

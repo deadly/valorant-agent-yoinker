@@ -25,11 +25,16 @@ class Player:
         # append current match ID to seenMatches
         matchInfo = self.client.pregame_fetch_match()
         self.seenMatches.append(matchInfo['ID'])
-        # update currentMatch to the current pregame
+    
+    def get_current_match(self):
+        matchInfo = self.client.pregame_fetch_match()
         self.currentMatch['map'] = matchInfo['MapID']
         self.currentMatch['ID'] = matchInfo['ID']
+        return self.currentMatch
     
-    
+    def get_seen_matches(self):
+        return self.seenMatches
+
     def get_side(self):
         teamID = self.currentMatch['Teams'][0]['TeamID']
 

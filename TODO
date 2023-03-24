@@ -1,7 +1,5 @@
 When built exe runs it creats a folder (bug)
-Topbar never changes from HOME (bug)
-Thread keeps running ever after program closes. (bug)
-Cmd opens when you run exe and stays open (bug)
 Make it so it stops crashing if val not open and open a webpage that shows an error.
 
-Possible feature to ignore map choices and just unlock a specific agent
+Set all option for agents (suggestion)
+Autoupdater

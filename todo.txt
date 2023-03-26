@@ -1,0 +1,3 @@
+• Change user_settings to JSON instead of TOML
+• Implement the actual instalocker
+• Change design to remove globals from the main file

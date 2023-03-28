@@ -12,6 +12,8 @@ PROFILE_PATH = os.path.join(os.getcwd(), 'profiles/')
 REGIONS = ["na", "eu", "latam", "br", "ap", "kr", "pbe"]
 
 # TODO: move this Profile class and related functions to different files
+
+
 @dataclasses.dataclass
 class Profile:
     name: str
@@ -55,9 +57,14 @@ def dump_profile(game_data: Profile) -> None:
     }
     with open(PROFILE_PATH + game_data.name + '.json', 'w') as f:
         json.dump(game_data_dict, f, indent=4)
-        
+
 
 def delete_profile(profile_name: str) -> None:
+    """Delete the profile file with the given name.
+
+    Args:
+        profile_name (str): The profile name (no file extension).
+    """
     os.remove(f'{PROFILE_PATH}\\{profile_name}.json')
 
 
@@ -181,6 +188,11 @@ class Instalocker:
         return False
 
     def select_profile_menu(self) -> bool:
+        """Select a profile instance variable of the user choice.
+
+        Returns:
+            bool: True if a new profile was selected, False otherwise
+        """
         if profile_name := get_profile_name('Select the profile you want to use'):
             self.profile = load_profile(profile_name)
             # TODO: save new settings
@@ -193,15 +205,24 @@ class Instalocker:
         return False
 
     def delete_profile_menu(self) -> bool:
+        """Delete a profile file.
+
+        Also set profile instance variable to None if a profile was successfully deleted.
+
+        Returns:
+            bool: True is a profile was deleted, False otherwise.
+        """
         if profile_name := get_profile_name('Select the profile you want to delete'):
             if eg.ynbox(f'Delete the profile "{profile_name}"?', 'Profile Deletion'):
                 delete_profile(profile_name)
                 self.profile = None
                 # TODO: save new settings
-                eg.msgbox(f'Profile "{profile_name}" deleted Successfully', 'Profile deletion')
+                eg.msgbox(f'Profile "{profile_name}" deleted Successfully',
+                          'Profile deletion')
                 return True
             else:
-                eg.msgbox(f'Profile {profile_name} not deleted', 'Profile deletion')
+                eg.msgbox(f'Profile {profile_name} not deleted',
+                          'Profile deletion')
         return False
 
     def start_instalocker_menu(self):

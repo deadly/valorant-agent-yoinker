@@ -71,7 +71,7 @@ class UserSettings(eg.EgStore):
     def __init__(self, filename: str) -> None:  # filename is required
         # Specify default/initial values for variables that an application wants to remember.
         self.region: str | None = None
-        self.profile_name: str | None = None
+        self.profile: Profile | None = None
 
         # For subclasses of EgStore, these must be the last two statements in the __init__ method
         self.filename = filename
@@ -81,36 +81,29 @@ class UserSettings(eg.EgStore):
 # TODO: rename this class to "App" or similar
 class Instalocker:
     def __init__(self, user_settings_file) -> None:
-        self.__settings = UserSettings(user_settings_file)
-
-        # Try load values that are on the settings file
-        self._region: str | None = self.__settings.region
-        # Ternary operator to check get the actual profile object by name if there is one.
-        self._profile: Profile | None = load_profile(self.__settings.profile_name) \
-            if self.__settings.profile_name \
-            else None
-
+        # If the user_settings_file exists, this will restore its values
+        self._settings = UserSettings(user_settings_file)
+        print(self._settings.profile)
+        
     @property
     def region(self) -> str | None:
-        return self._region
+        return self._settings.region
 
     @region.setter
     def region(self, value: str) -> None:
-        # Save the new value on the settings file and on the class property
-        self.__settings.region = value
-        self.__settings.store()
-        self._region = value
+        # Save the new value on the settings file
+        self._settings.region = value
+        self._settings.store()
 
     @property
     def profile(self) -> Profile | None:
-        return self._profile
+        return self._settings.profile
 
     @profile.setter
     def profile(self, value: Profile | None) -> None:
-        # Save the new value on the settings file and on the class property
-        self.__settings.profile_name = value.name if value else None
-        self.__settings.store()
-        self._profile = value
+        # Save the new value on the settings file
+        self._settings.profile = value
+        self._settings.store()
 
     def main_menu(self) -> bool:
         """The main options of the application.

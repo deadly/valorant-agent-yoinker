@@ -11,7 +11,7 @@ PROFILE_PATH = os.path.join(os.getcwd(), 'profiles/')
 # https://support-valorant.riotgames.com/hc/en-us/articles/360055678634-Server-Select
 REGIONS = ["na", "eu", "latam", "br", "ap", "kr", "pbe"]
 
-# TODO: make this NOT a dataclass and move the related functions to the class
+# TODO: move this Profile class and related functions to different files
 @dataclasses.dataclass
 class Profile:
     name: str
@@ -22,7 +22,7 @@ class Profile:
 def load_profile(profile_name: str) -> Profile:
     """Load the information of a profile file.
 
-    If the profile does not exist, an error will occour.
+    If the profile does not exist, an error will occur.
 
     Args:
         profile_name (str): The name of the profile.
@@ -55,6 +55,10 @@ def dump_profile(game_data: Profile) -> None:
     }
     with open(PROFILE_PATH + game_data.name + '.json', 'w') as f:
         json.dump(game_data_dict, f, indent=4)
+        
+
+def delete_profile(profile_name: str) -> None:
+    os.remove(f'{PROFILE_PATH}\\{profile_name}.json')
 
 
 class UserSettings(eg.EgStore):
@@ -68,12 +72,14 @@ class UserSettings(eg.EgStore):
         self.restore()
 
 
+# TODO: rename this class to "App" or similar
 class Instalocker:
     def __init__(self, region: str | None = None, profile: Profile | None = None) -> None:
-        # TODO: implement the settings set and recovering on the Instalocker class
+        # TODO: implement the settings set and recovering using the UserSettings class.
+        # make region and profile setter (and getter if needed) methods
         self.region: str | None = region
         self.profile: Profile | None = profile
-        # TODO: make a "main_loop" function to handle the infinit loop
+        # TODO: make a "main_loop" function to handle the infinite loop
 
     def main_menu(self) -> bool:
         """The main options of the application.
@@ -105,13 +111,13 @@ class Instalocker:
                         }
         }
         has_profile_and_region = {
-            'message': f'Selected profile: {self.profile}',
+            'message': 'Selected profile: {profile_name}',
             'choices': {'Start instalocker': self.start_instalocker_menu,
                         **no_profile_selected['choices']
                         }
         }
 
-        # Define the options acording to the criteria
+        # Define the options according to the criteria
         # Does not have a region.
         if not self.region:
             info = no_region
@@ -126,13 +132,16 @@ class Instalocker:
 
         # Has a selected profile and has region.
         else:
+            # Add the profile name
+            has_profile_and_region['message'] = has_profile_and_region['message'].format(
+                profile_name=self.profile.name.title())
             info = has_profile_and_region
 
         # get the input from the user
-        msg = info['message'] + '\n\nPick a option:'
+        msg = info['message'] + '\n\nPick a option'
         available_choices = info['choices']
-        user_choice = eg.choicebox(msg, 'Main Menu', list(available_choices.keys()))
-        print(user_choice)
+        user_choice = eg.choicebox(
+            msg, 'Main Menu', list(available_choices.keys()))
 
         # User canceled the operation
         if user_choice is None:
@@ -150,6 +159,7 @@ class Instalocker:
         """
         if user_region := get_region('Select your region'):
             self.region = user_region
+            # TODO: save new settings
             eg.msgbox(f'Region {self.region.upper()} selected successfully!',
                       'Success')
             return True
@@ -163,20 +173,39 @@ class Instalocker:
         """
         if game_mode := get_game_mode('Chose the game mode for the profile'):
             if map_agent := get_map_agent(f'Type the character you like for each map in the {game_mode.name.title()} game mode.\nLeave blank if you don\'t want to instalock in that map.'):
-                if profile_name := get_user_text_input('How do you what to name your profile?', 'Profile name'):
+                if profile_name := get_user_text_input('How do you what to name your profile?\n\nIf a profile with that name already exists it will be replaced with this new one.', 'Profile name'):
                     dump_profile(Profile(profile_name, game_mode, map_agent))
-                    eg.msgbox(f'Profile {profile_name} created successfully!\nYou can select it from the "Select Profile" option in the Main Menu',
+                    eg.msgbox(f'Profile "{profile_name}" created successfully!\nYou can select it from the "Select Profile" option in the Main Menu',
                               'Success')
                     return True
         return False
 
-    def select_profile_menu(self):
-        print('select_profile_menu')
+    def select_profile_menu(self) -> bool:
+        if profile_name := get_profile_name('Select the profile you want to use'):
+            self.profile = load_profile(profile_name)
+            # TODO: save new settings
+            # Show profile information
+            msg = f'Profile name: {self.profile.name}\n\nProfile game mode: {self.profile.game_mode.name.title()}\n\n'
+            for game_map, game_character in self.profile.map_agent.items():
+                msg += f'{game_map.name.title():<10}{game_character.name.title() if game_character is not None else None}\n'
+            eg.msgbox(msg, 'Profile information')
+            return True
+        return False
 
-    def delete_profile_menu(self):
-        print('delete_profile_menu')
+    def delete_profile_menu(self) -> bool:
+        if profile_name := get_profile_name('Select the profile you want to delete'):
+            if eg.ynbox(f'Delete the profile "{profile_name}"?', 'Profile Deletion'):
+                delete_profile(profile_name)
+                self.profile = None
+                # TODO: save new settings
+                eg.msgbox(f'Profile "{profile_name}" deleted Successfully', 'Profile deletion')
+                return True
+            else:
+                eg.msgbox(f'Profile {profile_name} not deleted', 'Profile deletion')
+        return False
 
     def start_instalocker_menu(self):
+        # TODO: implement instalocker call
         print('start_instalocker')
 
 
@@ -186,7 +215,16 @@ def check_any_profile_existence() -> bool:
     Returns:
         bool: True if there is at least one file, False otherwise.
     """
-    return len(os.listdir(PROFILE_PATH)) != 0
+    return len(profiles_names()) != 0
+
+
+def profiles_names() -> list[str]:
+    """Return a list of all profile file names in the profile folder.
+
+    Returns:
+        list[str]: A list with all profiles names (no file extension).
+    """
+    return [profile_file.removesuffix('.json') for profile_file in os.listdir(PROFILE_PATH)]
 
 
 def get_region(msg: str) -> str | None:
@@ -200,7 +238,7 @@ def get_region(msg: str) -> str | None:
     """
     # TODO: format regions
     choice = eg.choicebox(msg, 'Regions', REGIONS)
-    
+
     # User canceled operation or the region
     return None if choice is None else str(choice)
 
@@ -215,7 +253,8 @@ def get_game_mode(msg: str) -> ge.GameMode | None:
         ge.GameMode | None: The chosen game mode or None if the user canceled the action. 
     """
     # create and format options
-    available_choices = [game_mode.name.replace('_', ' ').title() for game_mode in ge.GameMode]
+    available_choices = [game_mode.name.replace(
+        '_', ' ').title() for game_mode in ge.GameMode]
     choice = eg.choicebox(msg, 'Game modes', available_choices)
 
     # User canceled operation or the game mode
@@ -279,12 +318,35 @@ def get_user_text_input(msg: str, title: str) -> str | None:
     """
     # Using a multenterbox, so a list of the name of the fields is needed (['']).
     # A list with a empty string so there is only the space for the user to type. (very clean)
-    user_input: list[str] = eg.multenterbox(msg, title, ['']) # type: ignore
-    
+    user_input: list[str] = eg.multenterbox(msg, title, [''])  # type: ignore
+
     # User canceled operation or the input.
     # Input is the first item on the list of fields name. There is only one field.
     return None if user_input is None else user_input[0]
-    
+
+
+def get_profile_name(msg: str) -> str | None:
+    """Get a profile name from the user.
+
+    Args:
+        msg (str): The message for the user.
+
+    Returns:
+        str | None: The profile name or None if the user cancel the action
+    """
+    profiles_name = profiles_names()
+
+    # Add empty string to avoid the easy gui error: "ValueError: at least two choices need to be specified".
+    # This empty option is equivalent to clicking in cancel
+    # len(profiles_name) can't be less than one, because this option only appear if the user already has a profile created
+    if len(profiles_name) == 1:
+        profiles_name.append('')
+
+    user_choice = eg.choicebox(msg, 'Profile selection', profiles_name)
+
+    # Check if the user selected the empty string
+    return None if (user_choice == '' or user_choice is None) else str(user_choice)
+
 
 def main() -> int:
     app = Instalocker('br')

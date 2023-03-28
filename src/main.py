@@ -1,352 +1,297 @@
-# TODO: change selected set type and sets file format.
-# TODO: maybe separate the functions in this file into different files
 import easygui as eg
 import os
-import toml
 import game_elements as ge
-import instalocker
+import json
+import typing as t
+import dataclasses
 
-SETS_PATH = os.path.join(os.getcwd(), 'sets')
+PROFILE_PATH = os.path.join(os.getcwd(), 'profiles/')
 
-# selected_set type hint detailed: {name: set_name, game_mode: {map: agent}}
-selected_set: dict = None
-region: str = None
+# TODO: make this a dictionary. implement regions locations and names
+# https://support-valorant.riotgames.com/hc/en-us/articles/360055678634-Server-Select
+REGIONS = ["na", "eu", "latam", "br", "ap", "kr", "pbe"]
+
+# TODO: make this NOT a dataclass and move the related functions to the class
+@dataclasses.dataclass
+class Profile:
+    name: str
+    game_mode: ge.GameMode
+    map_agent: t.Dict[ge.Map, ge.Agent | None]
 
 
-def main_menu() -> str | None:
-    """Main menu with main options
+def load_profile(profile_name: str) -> Profile:
+    """Load the information of a profile file.
+
+    If the profile does not exist, an error will occour.
+
+    Args:
+        profile_name (str): The name of the profile.
 
     Returns:
-        str | None: Str -> name of the option. None -> User canceled action 
+        Profile: The profile object containing the information from the file.
     """
-    global selected_set, region
-    # Base choices. More choicer are added if the user match some criteria.
-    choices = ['Region',
-               'Quit']
+    # Load JSON data from file
+    with open(PROFILE_PATH + profile_name + '.json', 'r') as f:
+        json_data = json.load(f)
 
-    # Does not has a region.
-    if not region:
-        info = 'You haven\'n selected your region. Select a region to use Valorant instalocker'
-
-    # Does not have any set created. Has region.
-    elif not check_any_set_existence():
-        info = 'You have no set created. Create a set to use Valorant instalocker'
-        new_choices = ['Create new set']
-        choices = new_choices + choices
-
-    # Has at least one set created but none is selected. Has region.
-    elif not selected_set:
-        info = 'You have no set selected'
-        new_choices = ['Select set',
-                       'Delete set',
-                       'Create new set']
-        choices = new_choices + choices
-
-    # Has a selected set. Has region.
-    else:
-        info = f'Selected set: {list(selected_set.values())[0]}\n'
-        new_choices = ['Start instalocker',
-                       'Select set',
-                       'Delete set',
-                       'Create new set']
-        choices = new_choices + choices
-
-    msg = info + '\n\nPick a option:'
-    return eg.choicebox(msg, 'Main Menu', choices)
+    # Create instances of dataclasses using JSON data
+    # Use Enum to get enum member
+    game_mode = ge.GameMode[json_data['game_mode'].upper()]
+    map_agent = {ge.Map[k.upper()]: (ge.Agent[v.upper()] if v is not None else None)
+                 for k, v in json_data['map_agent'].items()}
+    return Profile(profile_name, game_mode, map_agent)
 
 
-def select_set(set_name: str, set_content: dict[str, dict[str, str]]) -> None:
-    """Define the "selected_set" global variable.
-    If both args are None, the "selected_set" global variable becomes None.
+def dump_profile(game_data: Profile) -> None:
+    """Dump information from a profile object into a file.
 
     Args:
-        set_name (str): The name of the set
-        set_content (dict[str, dict[str, str]]): The set values
+        game_data (Profile): The profile object with will be dumped into the file.
     """
-    global selected_set
+    # Dump dataclass instances to JSON
+    game_data_dict = {
+        'game_mode': game_data.game_mode.name.title(),
+        'map_agent': {k.name.title(): (v.name.title() if v is not None else None) for k, v in game_data.map_agent.items()}
+    }
+    with open(PROFILE_PATH + game_data.name + '.json', 'w') as f:
+        json.dump(game_data_dict, f, indent=4)
 
-    # Remove the selected set if None is passed.
-    # None is not a default value to prevention accidental deletion.
-    if set_name is None and set_content is None:
-        selected_set = None
-        return
-    selected_set = {'name': set_name, **set_content}
+
+class UserSettings(eg.EgStore):
+    def __init__(self, filename: str) -> None:  # filename is required
+        # Specify default/initial values for variables that an application wants to remember.
+        self.region: str | None = None
+        self.profile: Profile | None = None
+
+        # For subclasses of EgStore, these must be the last two statements in the __init__ method
+        self.filename = filename
+        self.restore()
 
 
-def delete_set(set_name: str) -> None:
-    """Delete a set file
+class Instalocker:
+    def __init__(self, region: str | None = None, profile: Profile | None = None) -> None:
+        # TODO: implement the settings set and recovering on the Instalocker class
+        self.region: str | None = region
+        self.profile: Profile | None = profile
+        # TODO: make a "main_loop" function to handle the infinit loop
+
+    def main_menu(self) -> bool:
+        """The main options of the application.
+
+        Show options to the user depending on some criteria
+
+        Returns:
+            bool: True if the user selected a option, False if the user canceled the action.
+        """
+        # Define the available options depending on some criteria
+        no_region = {
+            'message': 'You haven\'t selected your region. Select a region to use Valorant instalocker',
+            'choices': {
+                'Region': self.region_menu
+            }
+        }
+        no_profile_created = {
+            'message': 'You have no profile created. Create a profile to use Valorant instalocker',
+            'choices': {
+                'Create new profile': self.create_profile_menu,
+                **no_region['choices']
+            }
+        }
+        no_profile_selected = {
+            'message': 'You have no profile selected. Select a profile to use Valorant instalocker',
+            'choices': {'Select profile': self.select_profile_menu,
+                        'Delete profile': self.delete_profile_menu,
+                        **no_profile_created['choices']
+                        }
+        }
+        has_profile_and_region = {
+            'message': f'Selected profile: {self.profile}',
+            'choices': {'Start instalocker': self.start_instalocker_menu,
+                        **no_profile_selected['choices']
+                        }
+        }
+
+        # Define the options acording to the criteria
+        # Does not have a region.
+        if not self.region:
+            info = no_region
+
+        # Does not have any profile created and has region.
+        elif not check_any_profile_existence():
+            info = no_profile_created
+
+        # Has at least one profile created but none is selected and has region.
+        elif not self.profile:
+            info = no_profile_selected
+
+        # Has a selected profile and has region.
+        else:
+            info = has_profile_and_region
+
+        # get the input from the user
+        msg = info['message'] + '\n\nPick a option:'
+        available_choices = info['choices']
+        user_choice = eg.choicebox(msg, 'Main Menu', list(available_choices.keys()))
+        print(user_choice)
+
+        # User canceled the operation
+        if user_choice is None:
+            return False
+
+        # Call the choice option and return
+        info['choices'][user_choice]()
+        return True
+
+    def region_menu(self) -> bool:
+        """Set the instance region.
+
+        Returns:
+            bool: True if a new regions was set, False otherwise
+        """
+        if user_region := get_region('Select your region'):
+            self.region = user_region
+            eg.msgbox(f'Region {self.region.upper()} selected successfully!',
+                      'Success')
+            return True
+        return False
+
+    def create_profile_menu(self) -> bool:
+        """Create a new profile file.
+
+        Returns:
+            bool: True if a new profile was created. False otherwise
+        """
+        if game_mode := get_game_mode('Chose the game mode for the profile'):
+            if map_agent := get_map_agent(f'Type the character you like for each map in the {game_mode.name.title()} game mode.\nLeave blank if you don\'t want to instalock in that map.'):
+                if profile_name := get_user_text_input('How do you what to name your profile?', 'Profile name'):
+                    dump_profile(Profile(profile_name, game_mode, map_agent))
+                    eg.msgbox(f'Profile {profile_name} created successfully!\nYou can select it from the "Select Profile" option in the Main Menu',
+                              'Success')
+                    return True
+        return False
+
+    def select_profile_menu(self):
+        print('select_profile_menu')
+
+    def delete_profile_menu(self):
+        print('delete_profile_menu')
+
+    def start_instalocker_menu(self):
+        print('start_instalocker')
+
+
+def check_any_profile_existence() -> bool:
+    """Check there is at least one file in the profile folder.
+
+    Returns:
+        bool: True if there is at least one file, False otherwise.
+    """
+    return len(os.listdir(PROFILE_PATH)) != 0
+
+
+def get_region(msg: str) -> str | None:
+    """Get a region from the user.
 
     Args:
-        set_name (str): The name of the file without extension.
+        msg (str): The message for the user.
+
+    Returns:
+        str | None: The chosen region or None if the user canceled the action. 
     """
-    os.remove(f'{SETS_PATH}\\{set_name}.toml')
+    # TODO: format regions
+    choice = eg.choicebox(msg, 'Regions', REGIONS)
+    
+    # User canceled operation or the region
+    return None if choice is None else str(choice)
 
 
 def get_game_mode(msg: str) -> ge.GameMode | None:
-    """Get a game mode from the user
+    """Get a game mode from the user.
 
     Args:
-        msg (str): The message that will appear on the screen
+        msg (str): The message for the user
 
     Returns:
-        ge.GameMode | None: ge.GameMode -> GameMode object. None -> User canceled action 
+        ge.GameMode | None: The chosen game mode or None if the user canceled the action. 
     """
-    # Get formatted game mode names
-    choices = [mode.name.replace('_', ' ').title() for mode in ge.GameMode]
-    game_mode: str = eg.choicebox(msg, 'Game mode selection', choices)
+    # create and format options
+    available_choices = [game_mode.name.replace('_', ' ').title() for game_mode in ge.GameMode]
+    choice = eg.choicebox(msg, 'Game modes', available_choices)
 
-    # Operation canceled
-    if game_mode is None:
-        return None
-
-    # Fetch and return the GameMode object
-    return ge.GameMode.__members__[game_mode.replace(' ', '_').upper()]
+    # User canceled operation or the game mode
+    return None if choice is None else ge.GameMode[str(choice).replace(' ', '_').upper()]
 
 
-def get_map_agent(game_mode: ge.GameMode) -> dict[ge.Map, ge.Agent] | None:
-    """User select one agent for each map
+def get_map_agent(msg: str) -> dict[ge.Map, ge.Agent | None] | None:
+    """Get a combination of map and agent from the user.
+
+    At least one value of the dict return will be an Agent.
 
     Args:
-        game_mode (ge.GameMode): The game mode name that will appear on the box message
+        msg (str): The message for the user
 
     Returns:
-        dict[ge.Map, ge.Agent] | None: dict -> Map and agent combination. None -> User canceled action 
+        dict[ge.Map, ge.Agent | None] | None: None if the user canceled the action. Map-Agent combination otherwise.
     """
     maps_name = [game_map.name.title() for game_map in ge.Map]
-    agents = [agent.name.title() for agent in ge.Agent]
-    # Empty start to prevent "None is not iterable" error
-    agents_name: list[str] = ['']
+    agents_name = [game_agent.name.title() for game_agent in ge.Agent]
 
-    # Infinity loop until user type valid names or cancel the operation
-    valid = False
-    while not valid:
-        agents_name = eg.multenterbox(f'Type the character you like for each map in the {game_mode.name.title()} game mode',
-                                      'Set Creation',
-                                      maps_name)
+    # Validate inputs
+    while True:
+        agents_chosen: list[str] = eg.multenterbox(
+            msg, 'Map-Agent selection', maps_name)  # type: ignore
+        valid = True
 
-        # Operation canceled
-        if agents_name is None:
+        # User canceled the action
+        if agents_chosen is None:
             return None
 
-        # Validate agents
-        for agent in agents_name:
+        # All blank
+        if all(agent == '' for agent in agents_chosen):
+            eg.msgbox('You can\'t create a empty profile', 'Invalid profile')
+            continue
 
-            # Make sure that all maps have a agent
-            if agent == "":
-                eg.msgbox('Please, choose one agent for each map.',
-                          'Set Creation')
+        # Check for invalid agents
+        for agent in agents_chosen:
+            agent = agent.strip().title()
+            if agent not in agents_name and agent != '':
+                eg.msgbox(
+                    f'"{agent.strip().title()}" is not a valid agent.', 'Invalid agent')
+                valid = False
                 break
 
-            # Check valid agent
-            elif agent.title() not in agents:
-                eg.msgbox(f'The agent {agent.title()} is not a valid agent.',
-                          'Set Creation')
-                break
+        if valid:
+            break
 
-            # Break the loop if everything is OK
-            else:
-                valid = True
-
-    # Get object for each field
-    agents_name = [ge.Agent.__members__[field.upper()]
-                   for field in agents_name]
-
-    # Return the dict with map and agent objects
-    return dict(zip(list(ge.Map), agents_name))
+    # Join the two lists to make a dictionary. Also check for empty fields to be None
+    return dict(zip(list(ge.Map), [ge.Agent[agent.upper()] if agent != '' else None for agent in agents_chosen]))
 
 
-def get_user_free_input(prompt: str, title: str, field_name: str) -> str:
-    """Get a free input from the use
+def get_user_text_input(msg: str, title: str) -> str | None:
+    """Get a text input from the user.
 
     Args:
-        prompt (str): The message that will appear on the box
-        title (str): The title of the box
-        field_name (str): The name of the field where the user will input
+        msg (str): The message for the user.
+        title (str): The title of the box.
 
     Returns:
-        str: What the user inputted
+        str | None: None if the user canceled the action, the input otherwise.
     """
-    user_input = eg.multenterbox(prompt, title, field_name)
-
+    # Using a multenterbox, so a list of the name of the fields is needed (['']).
+    # A list with a empty string so there is only the space for the user to type. (very clean)
+    user_input: list[str] = eg.multenterbox(msg, title, ['']) # type: ignore
+    
+    # User canceled operation or the input.
+    # Input is the first item on the list of fields name. There is only one field.
     return None if user_input is None else user_input[0]
-
-
-def create_set(set_name: str, game_mode: ge.GameMode, data: dict[ge.Map, ge.Agent]) -> None:
-    """Create a set with the given data
-
-    Args:
-        set_name (str): The name of the set. No extension.
-        game_mode (ge.GameMode): The game mode of the set
-        data (dict[ge.Map, ge.Agent]): The map-agent combination
-
-    Returns:
-        bool: True if the set was created successfully, False otherwise.
-    """
-    # Format data
-    game_mode = game_mode.name.replace('_', ' ').title()
-    data = {k.name.title(): v.name.title() for k, v in data.items()}
-
-    # Create the file
-    with open(f'{SETS_PATH}\\{set_name}.toml', 'w')as f:
-        toml.dump({game_mode: data}, f)
-
-
-def get_set_name() -> str:
-    """Get a existent set name of the user choice. Does not return the file extension, just the set name
-
-    Returns:
-        str: The set name
-    """
-    sets_names = [set_file.removesuffix('.toml')
-                  for set_file in os.listdir(SETS_PATH)]
-
-    # Add empty string to avoid "ValueError: at least two choices need to be specified".
-    # This empty option is equivalent to clicking in cancel
-    sets_names.append('')
-    choice = eg.choicebox('Select the set you want',
-                          'Set selection', sets_names)
-
-    # Check if the user selected the empty string
-    return None if choice == '' else choice
-
-
-def get_set_content(set_name: str) -> dict[str, dict[str, str]] | None:
-    """Return the content of a toml file (aka set in the project context)
-
-    Args:
-        set_name (str): The name of the set
-
-    Returns:
-        dict[str, dict[str, str]] | None: dict -> The set content. None -> Error reading the file
-    """
-    content = None
-    try:
-        with open(f'{SETS_PATH}\\{set_name}.toml', 'r')as f:
-            content = toml.load(f)
-        return content
-
-    except FileExistsError:
-        return None
-
-
-def check_any_set_existence() -> bool:
-    """Check there is at least one file in the set folder
-
-    Returns:
-        bool: True if there is at least one file. False if there is no files
-    """
-    return len(os.listdir(SETS_PATH)) != 0
-
-
-def show_set_information(set_information: dict) -> None:
-    """Show the set information.
-
-    Args:
-        set_information (dict): A set that is same type as the selected_set global variable
-    """
-    msg = f'Name: {list(set_information.values())[0]}\n\n'
-    msg += f'Game mode: {list(set_information.keys())[1]}\n\n'
-
-    for game_map, game_character in list(set_information.values())[1].items():
-        msg += f'{game_map:<10}{game_character}\n'
-
-    eg.msgbox(msg, list(set_information.values())[0])
-
-
-def get_region() -> str | None:
-    """Get the user region
-
-    Returns:
-        str | None: The region or None
-    """
-
-    # Define the regions and its equivalents
-    regions = ["na", "eu", "latam", "br", "ap", "kr", "pbe"]
-
-    choice = eg.choicebox('Select your region',
-                          'Region selection',
-                          regions)
-
-    # User canceled operation or choice
-    return None if choice is None else choice
-
-
-def set_user_settings() -> None:
-    global region, selected_set
-    # format data
-    l_region = region
-    l_selected_set = selected_set
-
-    if l_region is None:
-        l_region = ""
-
-    l_selected_set = "" if l_selected_set is None else list(
-        l_selected_set.values())[0]
-
-    with open(os.path.join(os.getcwd(), 'user_settings.toml'), 'w') as f:
-        toml.dump({'region': l_region, 'selected_set': l_selected_set}, f)
-    return None
-
+    
 
 def main() -> int:
-    global selected_set, region
-
-    # Try to restore previous settings
-    with open(os.path.join(os.getcwd(), 'user_settings.toml'), 'r') as f:
-        data = toml.load(f)
-        if set_name := data["selected_set"]:
-            selected_set = {'name': set_name, **get_set_content(set_name)}
-
-        region = data["region"]
-
+    app = Instalocker('br')
     while True:
-        main_option = main_menu()
-
-        match main_option:
-            case "Start instalocker":
-                if eg.ynbox('Make sure that valorant is running before start the instalocker.\n',
-                            'Instalocker',
-                            ["[<F1>]Valorant is running. Start Instalocker", "[<F2>]Return to main menu"]):
-                    instalocker.instalocker(region, selected_set)
-
-            case "Select set":
-                if set_name := get_set_name():
-                    content = get_set_content(set_name)
-                    select_set(set_name, content)
-                    set_user_settings()
-                    show_set_information(selected_set)
-
-            case "Delete set":
-                if set_name := get_set_name():
-                    if eg.ynbox(f'Delete the set {set_name}', 'Set Deletion'):
-                        delete_set(set_name)
-                        select_set(None, None)
-                        set_user_settings()
-                        eg.msgbox('Set deleted Successfully', 'Set deletion')
-                    else:
-                        eg.msgbox('Set not deleted', 'Set deletion')
-
-            case "Create new set":
-                msg = 'Choose your favorite game mode to create a set for it.'
-                if game_mode := get_game_mode(msg):
-                    if map_agent := get_map_agent(game_mode):
-                        if set_name := get_user_free_input('How do you what to name your set?', 'Set name', ['']):
-                            create_set(f'{set_name}', game_mode, map_agent)
-                            eg.msgbox('Set created successfully!\nYou can select it from the "Select set" option',
-                                      'Success')
-
-            case "Region":
-                if region_choice := get_region():
-                    region = region_choice
-                    eg.msgbox('Region selected successfully!', 'Success')
-                    set_user_settings()
-
-            case "Quit":
-                break
-
-            case _:
-                break
-
+        do_continue = app.main_menu()
+        if not do_continue:
+            break
     return 0
 
 

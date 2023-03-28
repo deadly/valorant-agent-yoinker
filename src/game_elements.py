@@ -1,6 +1,6 @@
 import enum
 
-
+# TODO: format the values of these classes to use the same naming convention and case of the valorant api. eg. "oneforall" -> "OneForAll": 
 class GameMode(enum.Enum):
     UNRATED = "bomb"
     COMPETITIVE = "bomb" + "competitive"   # check for "QueueID" to find if is competitive

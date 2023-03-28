@@ -11,9 +11,8 @@ PROFILE_PATH = os.path.join(os.getcwd(), 'profiles/')
 # https://support-valorant.riotgames.com/hc/en-us/articles/360055678634-Server-Select
 REGIONS = ["na", "eu", "latam", "br", "ap", "kr", "pbe"]
 
+
 # TODO: move this Profile class and related functions to different files
-
-
 @dataclasses.dataclass
 class Profile:
     name: str
@@ -72,7 +71,7 @@ class UserSettings(eg.EgStore):
     def __init__(self, filename: str) -> None:  # filename is required
         # Specify default/initial values for variables that an application wants to remember.
         self.region: str | None = None
-        self.profile: Profile | None = None
+        self.profile_name: str | None = None
 
         # For subclasses of EgStore, these must be the last two statements in the __init__ method
         self.filename = filename
@@ -81,12 +80,37 @@ class UserSettings(eg.EgStore):
 
 # TODO: rename this class to "App" or similar
 class Instalocker:
-    def __init__(self, region: str | None = None, profile: Profile | None = None) -> None:
-        # TODO: implement the settings set and recovering using the UserSettings class.
-        # make region and profile setter (and getter if needed) methods
-        self.region: str | None = region
-        self.profile: Profile | None = profile
-        # TODO: make a "main_loop" function to handle the infinite loop
+    def __init__(self, user_settings_file) -> None:
+        self.__settings = UserSettings(user_settings_file)
+
+        # Try load values that are on the settings file
+        self._region: str | None = self.__settings.region
+        # Ternary operator to check get the actual profile object by name if there is one.
+        self._profile: Profile | None = load_profile(self.__settings.profile_name) \
+            if self.__settings.profile_name \
+            else None
+
+    @property
+    def region(self) -> str | None:
+        return self._region
+
+    @region.setter
+    def region(self, value: str) -> None:
+        # Save the new value on the settings file and on the class property
+        self.__settings.region = value
+        self.__settings.store()
+        self._region = value
+
+    @property
+    def profile(self) -> Profile | None:
+        return self._profile
+
+    @profile.setter
+    def profile(self, value: Profile | None) -> None:
+        # Save the new value on the settings file and on the class property
+        self.__settings.profile_name = value.name if value else None
+        self.__settings.store()
+        self._profile = value
 
     def main_menu(self) -> bool:
         """The main options of the application.
@@ -127,6 +151,8 @@ class Instalocker:
         # Define the options according to the criteria
         # Does not have a region.
         if not self.region:
+            # Add empty choice to prevent easygui: "ValueError: at least two choices need to be specified"
+            no_region['choices'][''] = lambda: None
             info = no_region
 
         # Does not have any profile created and has region.
@@ -147,8 +173,8 @@ class Instalocker:
         # get the input from the user
         msg = info['message'] + '\n\nPick a option'
         available_choices = info['choices']
-        user_choice = eg.choicebox(
-            msg, 'Main Menu', list(available_choices.keys()))
+        user_choice = eg.choicebox(msg, 'Main Menu',
+                                   list(available_choices.keys()))
 
         # User canceled the operation
         if user_choice is None:
@@ -166,8 +192,7 @@ class Instalocker:
         """
         if user_region := get_region('Select your region'):
             self.region = user_region
-            # TODO: save new settings
-            eg.msgbox(f'Region {self.region.upper()} selected successfully!',
+            eg.msgbox(f'Region {self.region.upper()} selected successfully!',  # type: ignore
                       'Success')
             return True
         return False
@@ -195,7 +220,6 @@ class Instalocker:
         """
         if profile_name := get_profile_name('Select the profile you want to use'):
             self.profile = load_profile(profile_name)
-            # TODO: save new settings
             # Show profile information
             msg = f'Profile name: {self.profile.name}\n\nProfile game mode: {self.profile.game_mode.name.title()}\n\n'
             for game_map, game_character in self.profile.map_agent.items():
@@ -216,7 +240,6 @@ class Instalocker:
             if eg.ynbox(f'Delete the profile "{profile_name}"?', 'Profile Deletion'):
                 delete_profile(profile_name)
                 self.profile = None
-                # TODO: save new settings
                 eg.msgbox(f'Profile "{profile_name}" deleted Successfully',
                           'Profile deletion')
                 return True
@@ -370,7 +393,8 @@ def get_profile_name(msg: str) -> str | None:
 
 
 def main() -> int:
-    app = Instalocker('br')
+    app = Instalocker(os.path.join(os.getcwd(), 'user_settings.txt'))
+    # TODO: make a "main_loop" method for the Instalocker class to handle the infinite app loop
     while True:
         do_continue = app.main_menu()
         if not do_continue:

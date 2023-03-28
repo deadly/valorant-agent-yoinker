@@ -1,102 +1,17 @@
-import dataclasses
-import json
 import os
-import typing as t
 
 import easygui as eg
 
+import constants as const
 import game_elements as ge
-
-PROFILE_PATH = os.path.join(os.getcwd(), 'profiles/')
-REGIONS = {
-    'na': ['US West (Oregon)',
-           'US West (N. California)',
-           'US East (N. Virginia)',
-           'US Central (Texas)',
-           'US Central (Illinois)',
-           'US Central (Georgia)'],
-    'eu': ['Frankfurt',
-           'Paris',
-           'Stockholm',
-           'Istanbul',
-           'London',
-           'Tokyo',
-           'Warsaw',
-           'Madrid',
-           'Bahrain'],
-    'latam': ['Santiago',
-              'Mexico City',
-              'Miami'],
-    'br': ['Sao Paulo'],
-    'ap': ['Hong Kong',
-           'Tokyo',
-           'Singapore',
-           'Sydney',
-           'Mumbai'],
-    'kr': ['Seoul']
-}
-
-
-# TODO: move this Profile class and related functions to different files
-@dataclasses.dataclass
-class Profile:
-    name: str
-    game_mode: ge.GameMode
-    map_agent: t.Dict[ge.Map, ge.Agent | None]
-
-
-def load_profile(profile_name: str) -> Profile:
-    """Load the information of a profile file.
-
-    If the profile does not exist, an error will occur.
-
-    Args:
-        profile_name (str): The name of the profile.
-
-    Returns:
-        Profile: The profile object containing the information from the file.
-    """
-    # Load JSON data from file
-    with open(PROFILE_PATH + profile_name + '.json', 'r') as f:
-        json_data = json.load(f)
-
-    # Create instances of dataclasses using JSON data
-    # Use Enum to get enum member
-    game_mode = ge.GameMode[json_data['game_mode'].upper()]
-    map_agent = {ge.Map[k.upper()]: (ge.Agent[v.upper()] if v is not None else None)
-                 for k, v in json_data['map_agent'].items()}
-    return Profile(profile_name, game_mode, map_agent)
-
-
-def dump_profile(game_data: Profile) -> None:
-    """Dump information from a profile object into a file.
-
-    Args:
-        game_data (Profile): The profile object with will be dumped into the file.
-    """
-    # Dump dataclass instances to JSON
-    game_data_dict = {
-        'game_mode': game_data.game_mode.name.title(),
-        'map_agent': {k.name.title(): (v.name.title() if v is not None else None) for k, v in game_data.map_agent.items()}
-    }
-    with open(PROFILE_PATH + game_data.name + '.json', 'w') as f:
-        json.dump(game_data_dict, f, indent=4)
-
-
-def delete_profile(profile_name: str) -> None:
-    """Delete the profile file with the given name.
-
-    Args:
-        profile_name (str): The profile name (no file extension).
-    """
-    os.remove(f'{PROFILE_PATH}\\{profile_name}.json')
+import profile_handler as ph
 
 
 class UserSettings(eg.EgStore):
     def __init__(self, filename: str) -> None:  # filename is required
         # Specify default/initial values for variables that an application wants to remember.
         self.region: str | None = None
-        self.profile: Profile | None = None
+        self.profile: ph.Profile | None = None
 
         # For subclasses of EgStore, these must be the last two statements in the __init__ method
         self.filename = filename
@@ -119,14 +34,21 @@ class Application:
         self._settings.store()
 
     @property
-    def profile(self) -> Profile | None:
+    def profile(self) -> ph.Profile | None:
         return self._settings.profile
 
     @profile.setter
-    def profile(self, value: Profile | None) -> None:
+    def profile(self, value: ph.Profile | None) -> None:
         self._settings.profile = value
         # Save the new value on the settings file
         self._settings.store()
+
+    def run(self) -> None:
+        """Runs the main_menu until user cancel the action on the main_menu (cancel button or close button)."""
+        while True:
+            loop = self.main_menu()
+            if not loop:
+                break
 
     def main_menu(self) -> bool:
         """The main options of the application.
@@ -222,7 +144,9 @@ class Application:
         if game_mode := get_game_mode('Chose the game mode for the profile'):
             if map_agent := get_map_agent(f'Type the character you like for each map in the {game_mode.name.title()} game mode.\nLeave blank if you don\'t want to instalock in that map.'):
                 if profile_name := get_user_text_input('How do you what to name your profile?\n\nIf a profile with that name already exists it will be replaced with this new one.', 'Profile name'):
-                    dump_profile(Profile(profile_name, game_mode, map_agent))
+                    ph.dump_profile(ph.Profile(profile_name,
+                                               game_mode,
+                                               map_agent))
                     eg.msgbox(f'Profile "{profile_name}" created successfully!\nYou can select it from the "Select Profile" option in the Main Menu',
                               'Success')
                     return True
@@ -235,7 +159,7 @@ class Application:
             bool: True if a new profile was selected, False otherwise
         """
         if profile_name := get_profile_name('Select the profile you want to use'):
-            self.profile = load_profile(profile_name)
+            self.profile = ph.load_profile(profile_name)
             # Show profile information
             msg = f'Profile name: {self.profile.name}\n\nProfile game mode: {self.profile.game_mode.name.title()}\n\n'
             for game_map, game_character in self.profile.map_agent.items():
@@ -254,7 +178,7 @@ class Application:
         """
         if profile_name := get_profile_name('Select the profile you want to delete'):
             if eg.ynbox(f'Delete the profile "{profile_name}"?', 'Profile Deletion'):
-                delete_profile(profile_name)
+                ph.delete_profile(profile_name)
                 self.profile = None
                 eg.msgbox(f'Profile "{profile_name}" deleted Successfully',
                           'Profile deletion')
@@ -284,7 +208,7 @@ def profiles_names() -> list[str]:
     Returns:
         list[str]: A list with all profiles names (no file extension).
     """
-    return [profile_file.removesuffix('.json') for profile_file in os.listdir(PROFILE_PATH)]
+    return [profile_file.removesuffix('.json') for profile_file in os.listdir(const.PROFILE_PATH)]
 
 
 def get_region(msg: str) -> str | None:
@@ -299,7 +223,7 @@ def get_region(msg: str) -> str | None:
     """
     # Format regions to show all servers in the options
     options = []
-    for acronym, places in REGIONS.items():
+    for acronym, places in const.REGIONS.items():
         opt = f'{acronym.upper()} - '
         for place_idx in range(len(places)):
             # Do not add the "," if it is the last item in the list
@@ -427,11 +351,7 @@ def get_profile_name(msg: str) -> str | None:
 
 def main() -> int:
     app = Application(os.path.join(os.getcwd(), 'user_settings.txt'))
-    # TODO: make a "main_loop" method for the Instalocker class to handle the infinite app loop
-    while True:
-        do_continue = app.main_menu()
-        if not do_continue:
-            break
+    app.run()
     return 0
 
 

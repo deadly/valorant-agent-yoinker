@@ -1,15 +1,40 @@
-import easygui as eg
-import os
-import game_elements as ge
-import json
-import typing as t
 import dataclasses
+import json
+import os
+import typing as t
+
+import easygui as eg
+
+import game_elements as ge
 
 PROFILE_PATH = os.path.join(os.getcwd(), 'profiles/')
-
-# TODO: make this a dictionary. implement regions locations and names
-# https://support-valorant.riotgames.com/hc/en-us/articles/360055678634-Server-Select
-REGIONS = ["na", "eu", "latam", "br", "ap", "kr", "pbe"]
+REGIONS = {
+    'na': ['US West (Oregon)',
+           'US West (N. California)',
+           'US East (N. Virginia)',
+           'US Central (Texas)',
+           'US Central (Illinois)',
+           'US Central (Georgia)'],
+    'eu': ['Frankfurt',
+           'Paris',
+           'Stockholm',
+           'Istanbul',
+           'London',
+           'Tokyo',
+           'Warsaw',
+           'Madrid',
+           'Bahrain'],
+    'latam': ['Santiago',
+              'Mexico City',
+              'Miami'],
+    'br': ['Sao Paulo'],
+    'ap': ['Hong Kong',
+           'Tokyo',
+           'Singapore',
+           'Sydney',
+           'Mumbai'],
+    'kr': ['Seoul']
+}
 
 
 # TODO: move this Profile class and related functions to different files
@@ -78,21 +103,19 @@ class UserSettings(eg.EgStore):
         self.restore()
 
 
-# TODO: rename this class to "App" or similar
-class Instalocker:
+class Application:
     def __init__(self, user_settings_file) -> None:
         # If the user_settings_file exists, this will restore its values
         self._settings = UserSettings(user_settings_file)
-        print(self._settings.profile)
-        
+
     @property
     def region(self) -> str | None:
         return self._settings.region
 
     @region.setter
     def region(self, value: str) -> None:
-        # Save the new value on the settings file
         self._settings.region = value
+        # Save the new value on the settings file
         self._settings.store()
 
     @property
@@ -101,8 +124,8 @@ class Instalocker:
 
     @profile.setter
     def profile(self, value: Profile | None) -> None:
-        # Save the new value on the settings file
         self._settings.profile = value
+        # Save the new value on the settings file
         self._settings.store()
 
     def main_menu(self) -> bool:
@@ -135,7 +158,7 @@ class Instalocker:
                         }
         }
         has_profile_and_region = {
-            'message': 'Selected profile: {profile_name}',
+            'message': 'Selected profile: {}',  # Placeholder for the profile name
             'choices': {'Start instalocker': self.start_instalocker_menu,
                         **no_profile_selected['choices']
                         }
@@ -160,7 +183,7 @@ class Instalocker:
         else:
             # Add the profile name
             has_profile_and_region['message'] = has_profile_and_region['message'].format(
-                profile_name=self.profile.name.title())
+                self.profile.name.title())
             info = has_profile_and_region
 
         # get the input from the user
@@ -265,6 +288,7 @@ def profiles_names() -> list[str]:
 
 
 def get_region(msg: str) -> str | None:
+    # sourcery skip: assign-if-exp, reintroduce-else
     """Get a region from the user.
 
     Args:
@@ -273,11 +297,26 @@ def get_region(msg: str) -> str | None:
     Returns:
         str | None: The chosen region or None if the user canceled the action. 
     """
-    # TODO: format regions
-    choice = eg.choicebox(msg, 'Regions', REGIONS)
+    # Format regions to show all servers in the options
+    options = []
+    for acronym, places in REGIONS.items():
+        opt = f'{acronym.upper()} - '
+        for place_idx in range(len(places)):
+            # Do not add the "," if it is the last item in the list
+            opt += f'{places[place_idx]}, ' \
+                if place_idx != len(places) - 1 \
+                else places[place_idx]
 
-    # User canceled operation or the region
-    return None if choice is None else str(choice)
+        options.append(opt)
+
+    choice: str | None = eg.choicebox(msg, 'Regions', options)  # type: ignore
+
+    # User canceled operation
+    if choice is None:
+        return None
+
+    # Get the unformatted acronym
+    return choice.split('-')[0].strip().lower()
 
 
 def get_game_mode(msg: str) -> ge.GameMode | None:
@@ -290,8 +329,8 @@ def get_game_mode(msg: str) -> ge.GameMode | None:
         ge.GameMode | None: The chosen game mode or None if the user canceled the action. 
     """
     # create and format options
-    available_choices = [game_mode.name.replace(
-        '_', ' ').title() for game_mode in ge.GameMode]
+    available_choices = [game_mode.name.replace('_', ' ').title()
+                         for game_mode in ge.GameMode]
     choice = eg.choicebox(msg, 'Game modes', available_choices)
 
     # User canceled operation or the game mode
@@ -314,8 +353,9 @@ def get_map_agent(msg: str) -> dict[ge.Map, ge.Agent | None] | None:
 
     # Validate inputs
     while True:
-        agents_chosen: list[str] = eg.multenterbox(
-            msg, 'Map-Agent selection', maps_name)  # type: ignore
+        agents_chosen: list[str] = eg.multenterbox(msg,
+                                                   'Map-Agent selection',
+                                                   maps_name)  # type: ignore
         valid = True
 
         # User canceled the action
@@ -386,7 +426,7 @@ def get_profile_name(msg: str) -> str | None:
 
 
 def main() -> int:
-    app = Instalocker(os.path.join(os.getcwd(), 'user_settings.txt'))
+    app = Application(os.path.join(os.getcwd(), 'user_settings.txt'))
     # TODO: make a "main_loop" method for the Instalocker class to handle the infinite app loop
     while True:
         do_continue = app.main_menu()

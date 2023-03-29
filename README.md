@@ -15,6 +15,7 @@ Now you have the executable file of the program. Double-click on it to start.
 - Install python3 from the [official site](https://www.python.org/).
 - Install the dependencies from the requirements.txt file.
 
+Now you have the project to use. Don't forget to read the license.
 
 # How to Use
 The program is very intuitive and all information will appear on the screen.
@@ -26,21 +27,21 @@ When you open the program for the first time you'll need to enter your server re
 ![app_first_run](images/app_first_run.png)
 ![region_options](images/region_options.png)
 
-## Set
+## Profile
 After you enter your region, new options will appear on the screen.
-These options allow you to create a SET, which is your preference for an agent in each map in a specific game mode. 
+These options allow you to create a profile, which is your preference for an agent in each map in a specific game mode. 
 
 This allows you to create predefined combinations of agents-map-gamemodes to use during your playtime.
 
-You can create, delete or select a set from the main menu options
+You can create, delete or select a profile from the main menu options
 
-![set_creation](images/set_creation.png)
+![profile_creation](images/profile_creation.png)
 ![character_selection](images/character_selection.png)
 
 ## Starting
-After selecting the set you want, the option to start the instalocker will appear. You will be prompted to start the Valorant before continuing with the instalocker. When your Valorant is opened, confirm the program and you can start the Valorant matchmaking.
+After selecting the profile you want, the option to start the instalocker will appear. You will be prompted to start the Valorant before continuing with the instalocker. When your Valorant is opened, confirm the program and you can start looking for a match.
 
-When the character selection starts your character will already be selected.
+When the character selection starts your agent will already be selected.
 
 ![ready_to_start](images/ready_to_start.png)
 ![valorant_running_confirmation](images/valorant_running_confirmation.png)
@@ -52,12 +53,12 @@ Enter [our discord server](https://discord.gg/faeM7p92pz) to chat and get suppor
 # How it Works
 Agent selecting is handled via the VALORANT Official API, which means that this program does not mess with the game's memory or files at all.
 
-# Is This Bannable?
+# Is This "bannable"?
 **USE AT YOUR OWN RISK.**
 
 **No suspensions have been reported so far from using this program.**
 
-This program **does not** use an auto-clicker, read the game's memory or files; therefore, the anti-cheat shouldn't be triggered.
+This program **does not** use an auto-clicker, read the game's memory or files; therefore, the anti-cheat **should not** be triggered.
 
 However, using the VALORANT API in this manner is against Riot's Terms of Service, since you are getting an advantage over other players. So there is always a risk.
 
@@ -87,5 +88,5 @@ See our [Discord Server](https://discord.gg/faeM7p92pz) for more details
 ### Style Guide
 
 - Follow the PEP8 style and conventions.
-- Add comments to your code to explain complex sections or algorithms.
+- Add comments to your code and doc-strings to your functions.
 

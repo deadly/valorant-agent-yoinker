@@ -153,4 +153,5 @@ cython_debug/
 
 .vscode
 summary.txt
-main2.py
+src/profiles/*
+src/user_settings.txt

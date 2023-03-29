@@ -19,7 +19,7 @@ class UserSettings(eg.EgStore):
 
 
 class Application:
-    def __init__(self, user_settings_file) -> None:
+    def __init__(self, user_settings_file: str) -> None:
         # If the user_settings_file exists, this will restore its values
         self._settings = UserSettings(user_settings_file)
 
@@ -111,8 +111,9 @@ class Application:
         # get the input from the user
         msg = info['message'] + '\n\nPick a option'
         available_choices = info['choices']
-        user_choice = eg.choicebox(msg, 'Main Menu',
-                                   list(available_choices.keys()))
+        user_choice: str | None = eg.choicebox(msg,
+                                               'Main Menu',
+                                               list(available_choices.keys()))  # type: ignore
 
         # User canceled the operation
         if user_choice is None:
@@ -255,10 +256,12 @@ def get_game_mode(msg: str) -> ge.GameMode | None:
     # create and format options
     available_choices = [game_mode.name.replace('_', ' ').title()
                          for game_mode in ge.GameMode]
-    choice = eg.choicebox(msg, 'Game modes', available_choices)
+    choice: str | None = eg.choicebox(msg,
+                                      'Game modes',
+                                      available_choices)  # type: ignore
 
     # User canceled operation or the game mode
-    return None if choice is None else ge.GameMode[str(choice).replace(' ', '_').upper()]
+    return None if choice is None else ge.GameMode[choice.replace(' ', '_').upper()]
 
 
 def get_map_agent(msg: str) -> dict[ge.Map, ge.Agent | None] | None:
@@ -277,9 +280,9 @@ def get_map_agent(msg: str) -> dict[ge.Map, ge.Agent | None] | None:
 
     # Validate inputs
     while True:
-        agents_chosen: list[str] = eg.multenterbox(msg,
-                                                   'Map-Agent selection',
-                                                   maps_name)  # type: ignore
+        agents_chosen: list[str] | None = eg.multenterbox(msg,
+                                                          'Map-Agent selection',
+                                                          maps_name)  # type: ignore
         valid = True
 
         # User canceled the action
@@ -319,7 +322,9 @@ def get_user_text_input(msg: str, title: str) -> str | None:
     """
     # Using a multenterbox, so a list of the name of the fields is needed (['']).
     # A list with a empty string so there is only the space for the user to type. (very clean)
-    user_input: list[str] = eg.multenterbox(msg, title, [''])  # type: ignore
+    user_input: list[str] | None = eg.multenterbox(msg,
+                                                   title,
+                                                   [''])  # type: ignore
 
     # User canceled operation or the input.
     # Input is the first item on the list of fields name. There is only one field.
@@ -343,7 +348,9 @@ def get_profile_name(msg: str) -> str | None:
     if len(profiles_name) == 1:
         profiles_name.append('')
 
-    user_choice = eg.choicebox(msg, 'Profile selection', profiles_name)
+    user_choice: str | None = eg.choicebox(msg,
+                                           'Profile selection',
+                                           profiles_name)  # type: ignore
 
     # Check if the user selected the empty string
     return None if (user_choice == '' or user_choice is None) else str(user_choice)

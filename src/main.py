@@ -4,6 +4,7 @@ import easygui as eg
 
 import constants as const
 import game_elements as ge
+import instalocker
 import profile_handler as ph
 
 
@@ -189,10 +190,23 @@ class Application:
                           'Profile deletion')
         return False
 
-    def start_instalocker_menu(self):
-        # TODO: implement instalocker call
-        print('start_instalocker')
-
+    def start_instalocker_menu(self) -> bool:
+        valorant_is_running = eg.ynbox('Make sure that valorant is running before start the instalocker.\nStart the instalocker before you start the matchmaking.',
+                                        'Instalocker',
+                                        ["[<F1>]Valorant is running. Start Instalocker", "[<F2>]Return to main menu"])
+        if not valorant_is_running:
+            return False   
+        
+        locker = instalocker.Instalocker(self.region, self.profile) # type: ignore
+        success = locker.run()
+        
+        # TODO: finish testing the Instalocker to finish this menu
+        if not success:
+            print('not instalocked')
+            return False
+        
+        print('instalocked')
+        return True
 
 def check_any_profile_existence() -> bool:
     """Check there is at least one file in the profile folder.

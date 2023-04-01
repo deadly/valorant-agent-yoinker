@@ -31,40 +31,46 @@ class Instalocker:
         self.stop_flag = mp.Value('b', False)
         self.return_queue = mp.Queue()
 
-    def run(self) -> bool:
+    def run(self) -> int:
         """Runs the instalocker.
 
         Returns:
-            bool: True if the a agent was successfully instalocked, False otherwise.
+            int: 
+                0 - Successfully locked the character
+                1 - Could not find the game
+                2 - The match game mode if different from the profile
+                3 - The profile does not have a agent for this map
+                4 - The character is already locked
         """
         match_info = self.wait_agent_selection()
-        print(match_info)
 
         # Check if the match was successfully found
         if not match_info:
-            return False
+            return 1
 
         # Check the game mode
         if self.get_match_game_mode(match_info) != self.profile.game_mode:
-            return False
+            return 2
 
         # Get the agent for the map
         agent = self.profile.map_agent[self.get_match_map(match_info)]
 
         # check if the user does not wants to instalock in this map
         if agent is None:
-            return False
+            return 3
 
-        # Instalock the character
-        # TODO: check the return value of pregame_lock_character to know if the character was successfully instalocked and return True of False. For example what happens if someone already locked the character.
+        # Try to instalock the character
+        # TODO: See what happens if someone already locked the character.
         lock_info = self._client.pregame_lock_character(agent.value)
-        print(lock_info)
-        print("\n\n")
-        print(lock_info['Teams'][0]['Players'][0]['CharacterSelectionState'])
-        if not lock_info:
-            return False
-
-        return True
+        
+        # Check if The character is already locked
+        try: 
+            # if the character is already locked, try to access the 'httpStatus' key will not return a error
+            lock_info['httpStatus']
+            return 4
+        except KeyError:
+            # If error is raised, this means that the return value of the pregame_lock_character does not has a 'httpStatus' key and the locking was successful
+            return 0
 
     def wait_agent_selection(self) -> dict:
         """Waits for the agent selection phase and return the pre game match information.

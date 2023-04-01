@@ -198,15 +198,10 @@ class Application:
             return False   
         
         locker = instalocker.Instalocker(self.region, self.profile) # type: ignore
-        success = locker.run()
+        locker_result = locker.run()
         
-        # TODO: finish testing the Instalocker to finish this menu
-        if not success:
-            print('not instalocked')
-            return False
-        
-        print('instalocked')
-        return True
+        # TODO: finish implementing the locker responses:
+        # use match case. See the run method doc string
 
 def check_any_profile_existence() -> bool:
     """Check there is at least one file in the profile folder.

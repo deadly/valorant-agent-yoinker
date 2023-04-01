@@ -35,6 +35,8 @@ This allows you to create predefined combinations of agents-map-gamemodes to use
 
 You can create, delete or select a profile from the main menu options
 
+You can have as many profiles as you want!
+
 ![profile_creation](images/profile_creation.png)
 ![character_selection](images/character_selection.png)
 

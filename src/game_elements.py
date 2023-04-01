@@ -1,3 +1,6 @@
+"""This file contains a Enum representation of the game elements.
+It is used to represent agents, game modes and maps as objects.
+This also make it easier to access the "developer name" of the items by the "conventional name"."""
 import enum
 
 

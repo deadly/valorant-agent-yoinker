@@ -1,4 +1,5 @@
-"""This file is called 'profile_handler' because the name 'profile' overrides the stdlib module 'profile'"""
+"""This file is called 'profile_handler' because the name 'profile' overrides the stdlib module 'profile'.
+This file contain all the Profile object related stuff"""
 
 import dataclasses
 import json

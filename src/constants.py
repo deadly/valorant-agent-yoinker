@@ -1,3 +1,4 @@
+"""This file contain constants used in the project."""
 import os
 
 

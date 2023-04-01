@@ -1,3 +1,4 @@
+"""This file contains all the API and actual instalocking stuff."""
 import multiprocessing as mp
 import time
 
@@ -14,8 +15,6 @@ import profile_handler as ph
 # - setting the stop_flag variable to False after use;
 # - cleaning the return_queue;
 # - etc...
-
-
 class Instalocker:
     def __init__(self, region: str, profile: ph.Profile) -> None:
         # Start the client

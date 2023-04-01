@@ -1,3 +1,5 @@
+"""This file contains the GUI implementation and data management.
+It combine the instalocker.py with the GUI"""
 import os
 
 import easygui as eg
@@ -21,7 +23,7 @@ class UserSettings(eg.EgStore):
 
 class Application:
     def __init__(self, user_settings_file: str) -> None:
-        # If the user_settings_file exists, this will restore its values
+        # If the user_settings_file exists, its values will be restore
         self._settings = UserSettings(user_settings_file)
 
     @property

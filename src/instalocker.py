@@ -36,11 +36,11 @@ class Instalocker:
 
         Returns:
             int: 
-                0 - Successfully locked the character
-                1 - Could not find the game
-                2 - The match game mode if different from the profile
-                3 - The profile does not have a agent for this map
-                4 - The character is already locked
+                0 - Successfully locked the character;
+                1 - Could not find the game;
+                2 - The match game mode if different from the profile;
+                3 - The profile does not have a agent for this map;
+                4 - The character is already locked;
         """
         match_info = self.wait_agent_selection()
 

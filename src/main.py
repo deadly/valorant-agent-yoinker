@@ -201,7 +201,17 @@ class Application:
         locker_result = locker.run()
         
         # TODO: finish implementing the locker responses:
-        # use match case. See the run method doc string
+        match locker_result:
+            case 0: # success
+                eg.msgbox('Agent locked successfully.', 'Success')
+            
+            case 4:
+                eg.msgbox('Agent not locked. Someone already locked the agent.', 'Fail')
+                
+            case _:
+                eg.msgbox('Agent not locked.', 'Fail')
+       
+        return True
 
 def check_any_profile_existence() -> bool:
     """Check there is at least one file in the profile folder.

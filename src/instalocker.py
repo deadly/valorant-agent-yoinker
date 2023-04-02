@@ -169,6 +169,7 @@ class Instalocker:
         # "QueueID" tells if the game is competitive.
         # If the game is NOT competitive, "QueueID" will be a empty string. Tus, not affecting "game_mode"
         # If the game IS competitive, "QueueID" will be "Competitive".
+        game_mode = game_mode + match_info['QueueID'].title()
         return ge.GameMode(game_mode)
 
     def get_match_map(self, match_info: dict) -> ge.Map:

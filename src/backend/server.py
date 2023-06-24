@@ -69,7 +69,9 @@ def home():
                 req = None
             mapsettings[_map] = req
         write_user_settings(allsettings)
+
     settings = get_user_settings()['mapPreferences'].items()
+
     return render_template(
         'index.html', 
         settings=settings,
@@ -86,11 +88,14 @@ def settings():
     if request.method == 'POST':
         # get new settings from post request then update data
         checkUpdates = request.form['checkUpdates'] #need to make this a checkbox or dropdown | True or False
+        region = request.form['region']
         hoverDelay = int(request.form['hoverDelay'])
         lockDelay = int(request.form['lockDelay'])
         data['checkUpdates'] = True if checkUpdates.lower() == "true" else False
+        data['region'] = region if region in get_regions() else data['region']
         data['hoverDelay'] = hoverDelay if hoverDelay != '' else data['hoverDelay']
         data['lockDelay'] = lockDelay if lockDelay != '' else data['lockDelay']
+        
         write_user_settings(data)
     return render_template("settings.html", settings=settings, regions=get_regions())
 

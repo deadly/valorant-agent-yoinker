@@ -6,6 +6,7 @@ from websockets.exceptions import ConnectionClosedError
 def initWS(window):
     try:
         startWs(window.get_current_url().replace('/','').replace('region', '').split(':')[2]) # start the ws and pass the port of the server
+        print("Successfully connected to websocket")
     except ConnectionClosedError:
         print("Connection closed: ", e)
         pass

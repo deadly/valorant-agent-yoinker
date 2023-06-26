@@ -135,6 +135,7 @@ def get_seen_matches():
     try:
         return player.get_seen_matches()
     except Exception as e:
+        print('Unknown error', e)
         return '', 204
     
 @server.route('/toggle', methods=['GET', 'POST'])
@@ -150,3 +151,11 @@ def updateMapTeam():
         sideMap[0] = get_maps()[sideMap[0]]
         return sideMap
     return '', '204'
+
+@server.route('/create_profile', methods=['POST'])
+def createProfile():
+    pass
+
+@server.route('/fetch_profiles', methods=['GET'])
+def fetchProfiles():
+    pass

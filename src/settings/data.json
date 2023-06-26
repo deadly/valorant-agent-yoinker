@@ -1,6 +1,6 @@
 {
     "checkUpdates": true,
-    "region": null,
+    "region": "NA",
     "hoverDelay": 0,
     "lockDelay": 0,
     "mapPreferences": {

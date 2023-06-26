@@ -119,6 +119,7 @@ def pregame_found():
             player.lock_agent(preferredAgent)
         return '', 200
     except Exception as e:
+        print("Unknown error:", e)
         return '', 204
 
 @server.route("/get_match_info", methods=['GET'])

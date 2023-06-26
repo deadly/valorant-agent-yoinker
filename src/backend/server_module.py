@@ -27,10 +27,15 @@ def get_maps() -> dict:
 
     maps = {}
     mapsData = requests.get("https://valorant-api.com/v1/maps").json()['data']
+    mapJSONData = get_user_settings()
 
     for mapInfo in mapsData:
         if (mapInfo['displayName'] == 'The Range'):
             continue
+
+        if (mapInfo['mapUrl'] not in mapJSONData['mapPreferences'].keys()):
+            mapJSONData['mapPreferences'][mapInfo['mapUrl']] = None
+            write_user_settings(mapJSONData)
 
         maps[mapInfo['mapUrl']] = mapInfo['displayName'] # create a dictionary in map codename:map displayname format
     

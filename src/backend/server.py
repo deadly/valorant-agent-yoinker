@@ -71,12 +71,13 @@ def home():
         write_user_settings(allsettings)
 
     settings = get_user_settings()['mapPreferences'].items()
+    maps = get_maps()
 
     return render_template(
         'index.html', 
         settings=settings,
         agents=get_agents(), 
-        maps=get_maps(), 
+        maps=maps,
         toggle_on=toggle_on,
         currentMap=currentMap,
         currentTeam=currentTeam
@@ -87,7 +88,7 @@ def settings():
     settings = data.items()
     if request.method == 'POST':
         # get new settings from post request then update data
-        checkUpdates = request.form['checkUpdates'] #need to make this a checkbox or dropdown | True or False
+        checkUpdates = request.form['checkUpdates'] # need to make this a checkbox or dropdown | True or False
         region = request.form['region']
         hoverDelay = int(request.form['hoverDelay'])
         lockDelay = int(request.form['lockDelay'])
@@ -103,7 +104,7 @@ def settings():
 def info():
     return render_template("info.html")
 
-#equested endpoint when websocket encounters pregame
+# requested endpoint when websocket encounters pregame
 @server.route("/pregame_found", methods=['GET'])
 def pregame_found():
     try:

@@ -1,4 +1,4 @@
-+{% extends "base.html" %}
+{% extends "base.html" %}
 {% block title %}Index{% endblock %}
 {% set active_page = "home" %}
 {% block html_head %}
@@ -7,46 +7,85 @@
 
 <div class="d-flex justify-content-center flex-nowrap">
     <div class="mx-5 my-5 px-5" style="border-style:solid; border-width: thin; border-color: ghostwhite; border-radius: 25px; padding-top: 20px; position:relative;">
-        <form action="{{ url_for('home')}}" method="post">
-            <div class="form-group">
-                <fieldset>
-                    <div class="row">
-                        {% for key, value in settings %}
-                        <div class="col-md-6">
-                            <div class="input-group mb-3">
-                                <span class="input-group-text" style="min-width: 150px;">{{maps[key]}}</span>
-                                <select class="form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}" id="{{key}}">
-                                    {% for agent in agents %}
-                                        {% if agent == value %}
-                                            <option value="{{agent}}" selected>{{agent}}</option>
-                                        {% else %}
-                                            <option value="{{agent}}">{{agent}}</option>
-                                        {% endif %}
-                                    {%endfor%}
-                                </select>              
-                            </div>
-                        </div>
-                        {%endfor%}
-                    </div>
-                </fieldset>
-                <button type="submit" class="col align-self-center mt-4 btn btn-primary">Update</button>
+      <form action="{{ url_for('home')}}" method="post">
+        <div class="form-group">
+          <fieldset>
+            <div class="row">
+              {% for key, value in settings %}
+              <div class="col-md-6">
+                <div class="input-group mb-3">
+                  <span class="input-group-text" style="min-width: 150px;">{{maps[key]}}</span>
+                  <select class="form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}" id="{{key}}">
+                    {% for agent in agents %}
+                    {% if agent == value %}
+                    <option value="{{agent}}" selected>{{agent}}</option>
+                    {% else %}
+                    <option value="{{agent}}">{{agent}}</option>
+                    {% endif %}
+                    {%endfor%}
+                  </select>
+                </div>
+              </div>
+              {%endfor%}
             </div>
-        </form>
-        <div class="custom-control custom-switch" style="position: absolute; bottom: -30px; left: 10px;">
-            <input onchange="updateToggle()" type="checkbox" class="custom-control-input" id="customSwitch1" {% if toggle_on %}checked{% endif %}>
-            <label class="custom-control-label" for="customSwitch1">Instalock</label>
+          </fieldset>
+          <div class="row justify-content-between">
+            <div class="col-auto mt-4">
+                <button id="btn" type="button" class="btn btn-primary" onclick="toggleSaveModal()">Save Profile</button>
+            </div>
+            <div class="col-auto mt-4">
+              <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+            <div class="col-auto mt-4">
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loadModal">Load Profile</button>
+            </div>
+          </div>
         </div>
-        <p id="currentMap" style="position: absolute; bottom: -47px; left: 436px;">
-            {{currentMap}}
-        </p>
-        <p id="currentTeam" style="position: absolute; bottom: -47px; left: 830px;">
-            {{currentTeam}}
-        </p>
+      </form>
+      <div class="modal" id="saveModal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Save Profile</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="toggleSaveModal()">
+                <span aria-hidden="true"></span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>This will create a profile of your current map/agent settings. Set the name of your profile then save</p>
+                <div class="col-md-3">
+                    <label class="col-form-label mt-4" for="saveProfileName">Profile Name</label>
+                    <input type="text" class="form-control" placeholder="Default input" id="saveProfileName">
+                </div>  
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary">Save</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="toggleSaveModal()">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="custom-control custom-switch" style="position: absolute; bottom: -30px; left: 10px;">
+        <input onchange="updateToggle()" type="checkbox" class="custom-control-input" id="customSwitch1" {% if toggle_on %}checked{% endif %}>
+        <label class="custom-control-label" for="customSwitch1">Instalock</label>
+      </div>
+      <p id="currentMap" style="position: absolute; bottom: -47px; left: 436px;">
+        {{currentMap}}
+      </p>
+      <p id="currentTeam" style="position: absolute; bottom: -47px; left: 830px;">
+        {{currentTeam}}
+      </p>
     </div>
-</div>
+  </div>
+  
 {% endblock %}
 {% block javascript %}
     <script>
+        function toggleSaveModal() {
+            $('#saveModal').toggle();
+        };
+
         function updateMapTeam() {
             $.get("{{url_for('updateMapTeam')}}", data => {
                 if (data != '')

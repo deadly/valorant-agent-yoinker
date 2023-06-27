@@ -107,7 +107,7 @@
         }
 
         function saveProfile() {
-            $.get("{{url_for('create_profile')}}", {
+            $.get("{{url_for('createProfile')}}", {
                 "profilePreferences": "",
                 "name": $('#saveProfileName').val()
             });

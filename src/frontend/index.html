@@ -86,6 +86,10 @@
             $('#saveModal').toggle();
         };
 
+        function toggleLoadModal() {
+            $('#loadModal').toggle();
+        }
+
         function updateMapTeam() {
             $.get("{{url_for('updateMapTeam')}}", data => {
                 if (data != '')
@@ -105,7 +109,7 @@
         function saveProfile() {
             $.get("{{url_for('create_profile')}}", {
                 "profilePreferences": "",
-                "name": ""
+                "name": $('#saveProfileName').val()
             });
         }
 

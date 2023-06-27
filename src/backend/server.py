@@ -152,7 +152,7 @@ def updateMapTeam():
         return sideMap
     return '', '204'
 
-@server.route('/create_profile', methods=['POST'])
+@server.route('/create_profile', methods=['GET'])
 def createProfile():
     pass
 

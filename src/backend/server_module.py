@@ -12,6 +12,15 @@ def write_user_settings(data: dict) -> None:
     with open("settings/data.json", 'w') as f:
         json.dump(data, f, indent=4)
 
+def create_user_profile(data: dict, name: str) -> None:
+    with open(f"settings/profiles/{name}.json", 'w') as f:
+        json.dump(data, f, indent=4)
+
+def get_user_profile(data: dict, name: str) -> dict:
+    with open(f"settings/profiles/{name}.json", 'w') as f:
+        data = json.load(f)
+        return data
+
 def get_agents() -> dict:
     # request all information for current agents then create a dictionary of name to uuid
     agentsMap = {'None': 'None'}

@@ -10,7 +10,7 @@
       <form action="{{ url_for('home')}}" method="post">
         <div class="form-group">
           <fieldset>
-            <div class="row">
+            <div class="row" id="agentSelect">
               {% for key, value in settings %}
               <div class="col-md-6">
                 <div class="input-group mb-3">
@@ -96,6 +96,17 @@
 
         function updateToggle() {
             $.get("{{url_for('toggle')}}", () => {});
+        }
+
+        function getSelectedAgents() {
+
+        }
+
+        function saveProfile() {
+            $.get("{{url_for('create_profile')}}", {
+                "profilePreferences": "",
+                "name": ""
+            });
         }
 
         setInterval(updateMapTeam, 7500);

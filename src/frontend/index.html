@@ -103,22 +103,21 @@
         }
 
         function getSelectedAgents() {
-          var selects = document.getElementById("agentSelect").getElementsByTagName("select");
-          var keyValuePairs = {};
+          const keyValuePairs = {};
 
-          for (var i = 0; i < selects.length; i++) {
-            var select = selects[i];
-            var key = select.id;
-            var value = select.value;
+          $('#agentSelect select').each((index, element) => {
+            const key = element.id;
+            const value = $(element).val();
             keyValuePairs[key] = value;
-          }
+          });
 
-          console.log(keyValuePairs); // Print key-value pairs to the console
+          return keyValuePairs;
+          
         }
 
         function saveProfile() {
             $.get("{{url_for('createProfile')}}", {
-                "profilePreferences": "",
+                "profilePreferences": getSelectedAgents(),
                 "name": $('#saveProfileName').val()
             });
         }

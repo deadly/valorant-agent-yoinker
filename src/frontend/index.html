@@ -53,13 +53,13 @@
             </div>
             <div class="modal-body">
               <p>This will create a profile of your current map/agent settings. Set the name of your profile then save</p>
-                <div class="col-md-3">
-                    <label class="col-form-label mt-4" for="saveProfileName">Profile Name</label>
-                    <input type="text" class="form-control" placeholder="Default input" id="saveProfileName">
+                <div class="col-md-3 p-0">
+                    <label class="col-form-label" for="saveProfileName">Profile Name</label>
+                    <input type="text" class="form-control" placeholder="Name" id="saveProfileName">
                 </div>  
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary">Save</button>
+              <button type="button" class="btn btn-primary" onclick="getSelectedAgents()">Save</button>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="toggleSaveModal()">Close</button>
             </div>
           </div>
@@ -103,7 +103,17 @@
         }
 
         function getSelectedAgents() {
+          var selects = document.getElementById("agentSelect").getElementsByTagName("select");
+          var keyValuePairs = {};
 
+          for (var i = 0; i < selects.length; i++) {
+            var select = selects[i];
+            var key = select.id;
+            var value = select.value;
+            keyValuePairs[key] = value;
+          }
+
+          console.log(keyValuePairs); // Print key-value pairs to the console
         }
 
         function saveProfile() {

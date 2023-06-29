@@ -32,13 +32,13 @@ def get_profile_names() -> list:
 
 def get_agents() -> dict:
     # request all information for current agents then create a dictionary of name to uuid
-    agentsMap = {'None': 'None'}
+    agentsMap = {}
     agentsData = requests.get("https://valorant-api.com/v1/agents", params={'isPlayableCharacter': True}).json()['data']
     
     for agent in agentsData:
         agentsMap[agent['displayName']] = agent['uuid']
 
-    return agentsMap
+    return {'None': 'None', **dict(sorted(agentsMap.items()))}
 
 def get_maps() -> dict:
     # request all information for maps and create a dictionary of mapUrl to displayName

@@ -1,0 +1,20 @@
+{
+    "checkUpdates": true,
+    "region": null,
+    "hoverDelay": 0,
+    "lockDelay": 0,
+    "mapPreferences": {
+        "/Game/Maps/Ascent/Ascent": null,
+        "/Game/Maps/Duality/Duality": null,
+        "/Game/Maps/Foxtrot/Foxtrot": null,
+        "/Game/Maps/Canyon/Canyon": null,
+        "/Game/Maps/Triad/Triad": null,
+        "/Game/Maps/Port/Port": null,
+        "/Game/Maps/Pitt/Pitt": null,
+        "/Game/Maps/Bonsai/Bonsai": null,
+        "/Game/Maps/Jam/Jam": null,
+        "/Game/Maps/HURM/HURM_Alley/HURM_Alley": null,
+        "/Game/Maps/HURM/HURM_Bowl/HURM_Bowl": null,
+        "/Game/Maps/HURM/HURM_Yard/HURM_Yard": null
+    }
+}

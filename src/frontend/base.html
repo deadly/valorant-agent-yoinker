@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Agent Yoinker</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/cyborg/bootstrap.min.css" integrity="sha384-nEnU7Ae+3lD52AK+RGNzgieBWMnEfgTbRHIwEvp1XXPdqdO6uLTd/NwXbzboqjc2" crossorigin="anonymous">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('home') }}">Agent Yoinker</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarColor02" style ="left:80px">
+          <ul class="navbar-nav mx-auto">
+            <li class="nav-item">
+              <a class="nav-link {{ 'active' if active_page == 'home' else '' }}" href="{{ url_for('home') }}">HOME
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {{ 'active' if active_page == 'settings' else '' }}" href="{{ url_for('settings') }}">SETTINGS</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {{ 'active' if active_page == 'info' else '' }}" href="{{ url_for('info') }}">INFO</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li>{{ name }}</li>
+      </ul>
+    </nav>
+    <p class="pr-3" style="position:absolute; bottom:0; right:0">github.com/deadly</p>
+    {% block javascript %}
+    {% endblock %}
+  </head>
+<body>
+{% block content %}
+{% endblock %}
+</body>
+</html>

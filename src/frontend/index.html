@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+{% set active_page = "home" %}
+{% block html_head %}
+{% endblock %}
+{% block content %}
+
+
+<div class="d-flex justify-content-center flex-nowrap">
+    <div class="mx-5 my-5 px-5" style="border-style:solid; border-width: thin; border-color: ghostwhite; border-radius: 25px; padding-top: 20px; position:relative;">
+      <form action="{{ url_for('home')}}" method="post">
+        <div class="form-group">
+          <fieldset>
+            <div class="row" id="agentSelect">
+              {% for key, value in settings %}
+              <div class="col-md-6">
+                <div class="input-group mb-3">
+                  <span class="input-group-text" style="min-width: 150px;">{{maps[key]}}</span>
+                  <select class="form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}" id="{{key}}">
+                    {% for agent in agents %}
+                    {% if agent == value %}
+                    <option value="{{agent}}" selected>{{agent}}</option>
+                    {% else %}
+                    <option value="{{agent}}">{{agent}}</option>
+                    {% endif %}
+                    {%endfor%}
+                  </select>
+                </div>
+              </div>
+              {%endfor%}
+            </div>
+          </fieldset>
+          <div class="row justify-content-between">
+            <div class="col-auto mt-4">
+                <button id="btn" type="button" class="btn btn-primary" onclick="toggleSaveModal()">Save Profile</button>
+            </div>
+            <div class="col-auto mt-4">
+              <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+            <div class="col-auto mt-4">
+              <button type="button" class="btn btn-primary" onclick="toggleLoadModal()">Load Profile</button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="modal" id="saveModal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Save Profile</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="toggleSaveModal()">
+                <span aria-hidden="true"></span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>This will create a profile of your current map/agent settings. Set the name of your profile then save</p>
+                <div class="col-md-3 p-0">
+                    <label class="col-form-label" for="saveProfileName">Profile Name</label>
+                    <input type="text" class="form-control" placeholder="Name" id="saveProfileName">
+                </div>  
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" onclick="saveProfile()">Save</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="toggleSaveModal()">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal" id="loadModal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Load Profile</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="toggleLoadModal()">
+                <span aria-hidden="true"></span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>This will select one of your map/agent profiles. Choose a profile then press Select and Update.</p>
+                <div class="col-md-3 p-0">
+                    <label class="col-form-label" for="saveProfileName">Profiles</label>
+                    <select id="profileDropdown" class="form-control"></select>
+                </div>  
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" onclick="updateSelectionsByProfile()">Select</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="toggleLoadModal()">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="custom-control custom-switch" style="position: absolute; bottom: -30px; left: 10px;">
+        <input onchange="updateToggle()" type="checkbox" class="custom-control-input" id="customSwitch1" {% if toggle_on %}checked{% endif %}>
+        <label class="custom-control-label" for="customSwitch1">Instalock</label>
+      </div>
+      <p id="currentMap" style="position: absolute; bottom: -47px; left: 477px;">
+        {{currentMap}}
+      </p>
+      <p id="currentTeam" style="position: absolute; bottom: -47px; left: 900px;">
+        {{currentTeam}}
+      </p>
+    </div>
+  </div>
+  
+{% endblock %}
+{% block javascript %}
+    <script>
+        function toggleSaveModal() {
+          $('#saveModal').toggle();
+        };
+
+        function toggleLoadModal() {
+          populateDropdownItems()
+          $('#loadModal').toggle();
+        }
+
+        function updateMapTeam() {
+            $.get("{{url_for('updateMapTeam')}}", data => {
+                if (data != '')
+                    $('#currentMap').text(data[0]);
+                    $('#currentTeam').text(data[1]);
+            })
+        }
+
+        function updateToggle() {
+            $.get("{{ url_for('toggle') }}", () => {});
+        }
+
+        function getSelectedAgents() {
+          const keyValuePairs = {};
+
+          $('#agentSelect select').each((index, element) => {
+            const key = element.id;
+            const value = ($(element).val() == "None" ? null : $(element).val());
+            keyValuePairs[key] = value;
+          });
+
+          return keyValuePairs;
+
+        }
+
+        function saveProfile() {
+          let profilePreferences = getSelectedAgents();
+          let name = $('#saveProfileName').val();
+
+          $.ajax({
+            url: "{{ url_for('createProfile') }}",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ profilePreferences: profilePreferences, name: name })
+          });
+
+        }
+
+        function populateDropdownItems() {
+          $.get("{{ url_for('fetchProfiles') }}", (data) => {
+            const dropdown = $("#profileDropdown");
+            dropdown.empty(); // Clear existing options
+
+            // Loop through the data and create <option> elements
+            data.forEach((item) => {
+              let option = $(`<option value="${item}">${item}</option>`);
+              dropdown.append(option);
+            });
+          });
+        };
+
+        function updateSelectionsByProfile() {
+          let selectedProfile = $("#profileDropdown").val();
+
+          $.get(
+            "{{ url_for('fetchProfileSettings') }}",
+            { selectedValue: selectedProfile },
+            (data) => {
+              console.log(data)
+              for (const [key, value] of Object.entries(data)) {
+                const selectElement = $(`select[id="${key}"]`);
+                selectElement.val((value == null ? "None" : value));
+                selectElement.trigger("change");
+              }
+            }
+          )
+        }
+
+        setInterval(updateMapTeam, 7500);
+
+    </script>
+{% endblock %}

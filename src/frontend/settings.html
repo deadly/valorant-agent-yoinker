@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+{% set active_page = "settings" %}
+{% block html_head %}
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center flex-nowrap">
+    <div class="mx-5 my-5 px-5" style="border-style:solid; border-width: thin; border-color: ghostwhite; border-radius: 25px;">
+      <form action="{{ url_for('settings')}}" method="post">
+        <div class="form-group">
+          <fieldset>
+            <div class="row">
+              {% set count = 0 %}
+              {% for key, value in settings if key != 'mapPreferences' %}
+                <div class="form-group col-md-6">
+                  {% if key =='checkUpdates' %}
+                    <label class="col-form-label mt-3" for="{{key}}">{{key}}</label>
+                    <select class="form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}" id="{{key}}">
+                      {% if value == True %}
+                        <option value="{{value}}" selected>{{value}}</option>
+                        <option value="False">False</option>
+                      {% else %}
+                        <option value="{{value}}" selected>{{value}}</option>
+                        <option value="True">True</option>
+                      {% endif %}
+                    </select>
+                  {% elif key == 'region' %}
+                    <label class="col-form-label mt-3" for="{{key}}">{{key}}</label>
+                    <select class="form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}" id="{{key}}">
+                      {% for region in regions %}
+                        {% if region == value %}
+                          <option value="{{region}}" selected>{{region}}</option>
+                        {% else %}
+                          <option value="{{region}}">{{region}}</option>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+                  {% else %}
+                    <label class="col-form-label mt-3" for="{{key}}">{{key}} (seconds)</label>
+                    <input type="number" class="form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}" id="{{key}}">
+                  {% endif %}
+                </div>
+                {% set count = count + 1 %}
+                {% if count == 2 %}
+                  {% set count = 0 %}
+                  </div>
+                  <div class="w-100"></div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </fieldset>
+          <button type="submit" class="col align-self-center mt-4 btn btn-primary">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  
+{% endblock %}

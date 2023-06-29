@@ -37,11 +37,12 @@
               <button type="submit" class="btn btn-primary">Update</button>
             </div>
             <div class="col-auto mt-4">
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loadModal">Load Profile</button>
+              <button type="button" class="btn btn-primary" onclick="toggleLoadModal()">Load Profile</button>
             </div>
           </div>
         </div>
       </form>
+
       <div class="modal" id="saveModal">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -66,6 +67,30 @@
         </div>
       </div>
 
+      <div class="modal" id="loadModal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Load Profile</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="toggleLoadModal()">
+                <span aria-hidden="true"></span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>This will select one of your map/agent profiles. Choose a profile then press Select and Update.</p>
+                <div class="col-md-3 p-0">
+                    <label class="col-form-label" for="saveProfileName">Profiles</label>
+                    <select id="profileDropdown" class="form-control"></select>
+                </div>  
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" onclick="updateSelectionsByProfile()">Select</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="toggleLoadModal()">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="custom-control custom-switch" style="position: absolute; bottom: -30px; left: 10px;">
         <input onchange="updateToggle()" type="checkbox" class="custom-control-input" id="customSwitch1" {% if toggle_on %}checked{% endif %}>
         <label class="custom-control-label" for="customSwitch1">Instalock</label>
@@ -83,11 +108,12 @@
 {% block javascript %}
     <script>
         function toggleSaveModal() {
-            $('#saveModal').toggle();
+          $('#saveModal').toggle();
         };
 
         function toggleLoadModal() {
-            $('#loadModal').toggle();
+          populateDropdownItems()
+          $('#loadModal').toggle();
         }
 
         function updateMapTeam() {
@@ -99,7 +125,7 @@
         }
 
         function updateToggle() {
-            $.get("{{url_for('toggle')}}", () => {});
+            $.get("{{ url_for('toggle') }}", () => {});
         }
 
         function getSelectedAgents() {
@@ -126,6 +152,36 @@
             data: JSON.stringify({ profilePreferences: profilePreferences, name: name })
           });
 
+        }
+
+        function populateDropdownItems() {
+          $.get("{{ url_for('fetchProfiles') }}", (data) => {
+            const dropdown = $("#profileDropdown");
+            dropdown.empty(); // Clear existing options
+
+            // Loop through the data and create <option> elements
+            data.forEach((item) => {
+              let option = $(`<option value="${item}">${item}</option>`);
+              dropdown.append(option);
+            });
+          });
+        };
+
+        function updateSelectionsByProfile() {
+          let selectedProfile = $("#profileDropdown").val();
+
+          $.get(
+            "{{ url_for('fetchProfileSettings') }}",
+            { selectedValue: selectedProfile },
+            (data) => {
+              console.log(data)
+              for (const [key, value] of Object.entries(data)) {
+                const selectElement = $(`select[id="${key}"]`);
+                selectElement.val((value == null ? "None" : value));
+                selectElement.trigger("change");
+              }
+            }
+          )
         }
 
         setInterval(updateMapTeam, 7500);

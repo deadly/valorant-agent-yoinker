@@ -160,10 +160,19 @@ def createProfile():
 
         create_user_profile(profile, name)
     except Exception as e:
-        print('Error saving profile: ', e)
+        print("Error saving profile: ", e)
 
     return '', '204'
 
 @server.route('/fetch_profiles', methods=['GET'])
 def fetchProfiles():
-    pass
+    return get_profile_names()
+
+@server.route('/fetch_profile_settings', methods=['GET'])
+def fetchProfileSettings():
+    try:
+        return get_user_profile(request.args.get('selectedValue'))
+    except Exception as e:
+        print("Error fetching profile settings: ", e)
+    
+    return '', '204'

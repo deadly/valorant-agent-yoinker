@@ -3,23 +3,32 @@ import os
 import sys
 import requests
 
+# get map preferences and program settings from data.json
 def get_user_settings() -> dict:
     with open("settings/data.json", 'r') as f:
         data = json.load(f)
         return data
 
+# rewrite data.json with updated map preferences and settings
 def write_user_settings(data: dict) -> None:
     with open("settings/data.json", 'w') as f:
         json.dump(data, f, indent=4)
 
+# create file named after profile that contains preferences
 def create_user_profile(data: dict, name: str) -> None:
     with open(f"settings/profiles/{name}.json", 'w') as f:
         json.dump(data, f, indent=4)
 
-def get_user_profile(data: dict, name: str) -> dict:
-    with open(f"settings/profiles/{name}.json", 'w') as f:
+# return the preferences from a file named after the selected profile
+def get_user_profile(name: str) -> dict:
+    with open(f"settings/profiles/{name}.json", 'r') as f:
         data = json.load(f)
         return data
+    
+# return the names of all created profiles    
+def get_profile_names() -> list:
+    files = os.listdir("settings/profiles")
+    return [file.replace('.json', '') for file in files]
 
 def get_agents() -> dict:
     # request all information for current agents then create a dictionary of name to uuid

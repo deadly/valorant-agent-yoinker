@@ -14,8 +14,8 @@
               {% set count = 0 %}
               {% for key, value in settings if key != 'mapPreferences' %}
                 <div class="form-group col-md-6">
-                  <label class="col-form-label mt-3" for="{{key}}">{{key}}</label>
                   {% if key =='checkUpdates' %}
+                    <label class="col-form-label mt-3" for="{{key}}">{{key}}</label>
                     <select class="form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}" id="{{key}}">
                       {% if value == True %}
                         <option value="{{value}}" selected>{{value}}</option>
@@ -26,6 +26,7 @@
                       {% endif %}
                     </select>
                   {% elif key == 'region' %}
+                    <label class="col-form-label mt-3" for="{{key}}">{{key}}</label>
                     <select class="form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}" id="{{key}}">
                       {% for region in regions %}
                         {% if region == value %}
@@ -36,7 +37,8 @@
                       {% endfor %}
                     </select>
                   {% else %}
-                    <input type="number" class="form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}"" id="{{key}}">
+                    <label class="col-form-label mt-3" for="{{key}}">{{key}} (seconds)</label>
+                    <input type="number" class="form-control" name="{{key}}" value="{{value}}" placeholder="{{value}}" id="{{key}}">
                   {% endif %}
                 </div>
                 {% set count = count + 1 %}

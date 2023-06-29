@@ -16,6 +16,6 @@ def initWS(window):
         raise e
 
 
-window = webview.create_window('Agent Yoinker', server, height=720, width=1280)
+window = webview.create_window('Agent Yoinker', server, height=768, width=1366)
 webview.start(initWS, (window,), debug=True) # start the window along with startWs in a separate thread
 closeWs()

@@ -5,6 +5,7 @@
 {% endblock %}
 {% block content %}
 
+
 <div class="d-flex justify-content-center flex-nowrap">
     <div class="mx-5 my-5 px-5" style="border-style:solid; border-width: thin; border-color: ghostwhite; border-radius: 25px; padding-top: 20px; position:relative;">
       <form action="{{ url_for('home')}}" method="post">
@@ -95,10 +96,10 @@
         <input onchange="updateToggle()" type="checkbox" class="custom-control-input" id="customSwitch1" {% if toggle_on %}checked{% endif %}>
         <label class="custom-control-label" for="customSwitch1">Instalock</label>
       </div>
-      <p id="currentMap" style="position: absolute; bottom: -47px; left: 436px;">
+      <p id="currentMap" style="position: absolute; bottom: -47px; left: 477px;">
         {{currentMap}}
       </p>
-      <p id="currentTeam" style="position: absolute; bottom: -47px; left: 830px;">
+      <p id="currentTeam" style="position: absolute; bottom: -47px; left: 900px;">
         {{currentTeam}}
       </p>
     </div>

@@ -1,4 +1,4 @@
-import os, sys, time
+import os, sys, time, json
 from flask import Flask, render_template, request, url_for, redirect
 from valclient.client import Client
 from backend.player import Player
@@ -154,7 +154,15 @@ def updateMapTeam():
 
 @server.route('/create_profile', methods=['POST'])
 def createProfile():
-    pass
+    try:
+        profile = request.json.get('profilePreferences')
+        name = request.json.get('name')
+
+        create_user_profile(profile, name)
+    except Exception as e:
+        print('Error saving profile: ', e)
+
+    return '', '204'
 
 @server.route('/fetch_profiles', methods=['GET'])
 def fetchProfiles():

@@ -59,7 +59,7 @@
                 </div>  
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" onclick="getSelectedAgents()">Save</button>
+              <button type="button" class="btn btn-primary" onclick="saveProfile()">Save</button>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="toggleSaveModal()">Close</button>
             </div>
           </div>
@@ -107,19 +107,25 @@
 
           $('#agentSelect select').each((index, element) => {
             const key = element.id;
-            const value = $(element).val();
+            const value = ($(element).val() == "None" ? null : $(element).val());
             keyValuePairs[key] = value;
           });
 
           return keyValuePairs;
-          
+
         }
 
         function saveProfile() {
-            $.get("{{url_for('createProfile')}}", {
-                "profilePreferences": getSelectedAgents(),
-                "name": $('#saveProfileName').val()
-            });
+          let profilePreferences = getSelectedAgents();
+          let name = $('#saveProfileName').val();
+
+          $.ajax({
+            url: "{{ url_for('createProfile') }}",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ profilePreferences: profilePreferences, name: name })
+          });
+
         }
 
         setInterval(updateMapTeam, 7500);

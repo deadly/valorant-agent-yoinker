@@ -1,3 +1,5 @@
 - Auto updater
 - Different instalock configurations depending on if attacking or defending first
 - Display an error page instead of crashing if VALORANT is not open when Agent Yoinker launched
+- Load last instalock settings on launch
+- Responsive UI

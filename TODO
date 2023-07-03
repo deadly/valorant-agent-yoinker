@@ -1,5 +1,5 @@
-When built exe runs it creats a folder (bug)
-Make it so it stops crashing if val not open and open a webpage that shows an error.
-
-Set all option for agents (suggestion)
-Autoupdater
+- Auto updater
+- Different instalock configurations depending on if attacking or defending first
+- Display an error page instead of crashing if VALORANT is not open when Agent Yoinker launched
+- Load last instalock settings on launch
+- Responsive UI

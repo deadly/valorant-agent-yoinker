@@ -69,3 +69,20 @@ def get_regions() -> dict:
         "KR",
         "PBE"
     ]
+
+def check_updates(version:float) -> bool:
+    """
+    Checks for updates.
+    Returns true if updates found and false if not.
+    """
+    try:
+        update_data = requests.get("https://api.github.com/repos/deadly/valorant-agent-yoinker/releases/latest").json()
+        latest = float(update_data["tag_name"].replace("release-v", ""))
+    except Exception as e:
+        print("There was an error while checking for updates: ", e)
+        return False
+    if version != latest:
+        return True
+    return False
+        
+

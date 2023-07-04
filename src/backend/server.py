@@ -5,7 +5,7 @@ from valclient.exceptions import HandshakeError
 from backend.player import Player
 from backend.server_module import *
 
-
+VERSION = 2.0
 # creates client and player object
 client = ''
 player = ''
@@ -52,14 +52,27 @@ def regionPopup():
 
 @server.route('/valorant_closed', methods=("GET", "POST"))
 def valorant_closed():
-    global firstReq
     if request.method == 'POST':
-        redirect("/")
+        return redirect("/")
     return render_template('valorantclosed.html')
+
+@server.route('/update_found', methods=('GET', 'POST'))
+def update_found():
+    if request.method == 'POST':
+        if request.form['update'] == 'true':
+            print("true")
+            #TODO: actually update the app
+        else:
+            return redirect("/")
+    return render_template('updatefound.html')
 
 @server.route("/", methods=('GET', 'POST'))
 def home():
     global firstReq
+
+    if data['checkUpdates'] == True:
+        if check_updates(VERSION):
+            return redirect("update_found")
 
     if data['region'] == None:
         return redirect('region')

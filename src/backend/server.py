@@ -1,6 +1,7 @@
 import os, sys, time, json
 from flask import Flask, render_template, request, url_for, redirect
 from valclient.client import Client
+from valclient.exceptions import HandshakeError
 from backend.player import Player
 from backend.server_module import *
 
@@ -49,6 +50,13 @@ def regionPopup():
         return redirect('/')
     return render_template('region.html', regions=get_regions())
 
+@server.route('/valorant_closed', methods=("GET", "POST"))
+def valorant_closed():
+    global firstReq
+    if request.method == 'POST':
+        redirect("/")
+    return render_template('valorantclosed.html')
+
 @server.route("/", methods=('GET', 'POST'))
 def home():
     global firstReq
@@ -56,7 +64,10 @@ def home():
     if data['region'] == None:
         return redirect('region')
     elif (firstReq == True) and (data['region'] != None):
-        init_player()
+        try:
+            init_player()
+        except HandshakeError:
+            return redirect('valorant_closed')
     
     firstReq = False
 
@@ -176,3 +187,4 @@ def fetchProfileSettings():
         print("Error fetching profile settings: ", e)
     
     return '', '204'
+

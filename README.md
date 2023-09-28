@@ -1,11 +1,14 @@
 # Is This Bannable?
 Riot has begun handing out 2 week suspensions to users for using this tool. USE AT YOUR OWN RISK WHEN USING THE COMPILED VERSION.
 
-# Discord Support Server
-https://discord.gg/faeM7p92pz
 
 # VALORANT Agent Yoinker
 A VALORANT tool for instalocking agents using the VALORANT API (Updated to include Deadlock/TDM maps).
+
+# Example
+<p align="center">
+    <img src="https://raw.githubusercontent.com/deadly/valorant-agent-yoinker/main/example.png" alt="Example screenshot of VALORANT Agent Yoinker">
+</p>
 
 # How to Use
 **MAKE SURE VALORANT IS OPEN BEFORE RUNNING AGENT YOINKER.** Launch VALORANT and then run the program. Enter your region and agents you want to instalock.
@@ -16,13 +19,11 @@ data.json Settings:
 # Regions
 The program will ask you for your region. The available regions are NA, EU, LATAM, BR, AP, KR, and PBE. Type the region that you play on. Here is a list of server locations and their respective region: https://support-valorant.riotgames.com/hc/en-us/articles/360055678634-Server-Select
 
+# Discord Support Server
+https://discord.gg/faeM7p92pz
+
 # How it Works
 Agent selecting is handled via the VALORANT API, which means that this program does not mess with the game's memory or files at all to select the agent. It just sends a request that an agent has been selected when in the pregame state.
-
-# Example
-<p align="center">
-    <img src="https://raw.githubusercontent.com/deadly/valorant-agent-yoinker/main/example.png" alt="Example screenshot of VALORANT Agent Yoinker">
-</p>
 
 # Donations
 Donations are appreciated. Join the discord server and DM <a href="discord://discord.com/users/1103966379100606516">decaf</a>
